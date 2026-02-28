@@ -168,14 +168,42 @@ def build_map():
     m.get_root().html.add_child(folium.Element(title_html))
 
     # Layer 2: LST Heatmap
-    heat_data = generate_sample_heatmap()
+    scored_path = os.path.join(OUTPUT_DIR, 'scored_sites.geojson')
+    if os.path.exists(scored_path):
+        with open(scored_path) as f:
+            _hm_data = json.load(f)
+        _feats = _hm_data.get('features', [])
+        if _feats:
+            # Spread heatmap intensity from each site using GPS score as weight
+            heat_data = []
+            for feat in _feats:
+                coords = feat['geometry']['coordinates']
+                gps    = feat['properties'].get('GPS', feat['properties'].get('gps', 50))
+                lat, lon = coords[1], coords[0]
+                intensity = float(gps) / 100.0
+                # Add the point plus 8 jittered neighbors to create spread
+                heat_data.append([lat, lon, intensity])
+                for _ in range(8):
+                    heat_data.append([
+                        lat + np.random.uniform(-0.15, 0.15),
+                        lon + np.random.uniform(-0.15, 0.15),
+                        intensity * np.random.uniform(0.4, 0.85)
+                    ])
+            print(f"  Heatmap built from {len(_feats)} real GEE sites.")
+        else:
+            heat_data = generate_sample_heatmap()
+            print("  No features in GeoJSON — using demo heatmap.")
+    else:
+        heat_data = generate_sample_heatmap()
+        print("  No scored_sites.geojson found — using demo heatmap.")
+
     HeatMap(
         heat_data,
         name='Land Surface Temperature (LST)',
-        min_opacity=0.3,
+        min_opacity=HM_OPACITY,
         max_zoom=12,
-        radius=20,
-        blur=15,
+        radius=HM_RADIUS,
+        blur=HM_BLUR,
         gradient={0.2: 'blue', 0.5: 'yellow', 0.8: 'orange', 1.0: 'red'}
     ).add_to(m)
 
@@ -202,34 +230,24 @@ def build_map():
 
     # Layer 4: Sweet Spot Candidate Sites
     sites = generate_sample_sites()
-
-    # Try loading real data if available
-    # scored_path = os.path.join(OUTPUT_DIR, 'scored_sites.geojson')
-    # if os.path.exists(scored_path):
-    #     print("  Loading real scored_sites.geojson...")
-    #     with open(scored_path) as f:
-    #         real_sites = json.load(f)
-            # Parse real features if format matches
-            # (extend this block once GEE export is confirmed)
     scored_path = os.path.join(OUTPUT_DIR, 'scored_sites.geojson')
     if os.path.exists(scored_path):
-        print("  Loading real scored_sites.geojson...")
         with open(scored_path) as f:
             real_data = json.load(f)
         features = real_data.get('features', [])
         if features:
             sites = []
-            for i, feat in enumerate(features[:10]):
+            for i, feat in enumerate(features):
                 coords = feat['geometry']['coordinates']
-                gps = feat['properties'].get('GPS', 50)
+                gps    = feat['properties'].get('GPS', feat['properties'].get('gps', 50))
                 sites.append({
-                    "name": f"Site R-{i+1}",
-                    "lat": coords[1],
-                    "lon": coords[0],
-                    "gps": round(gps, 1),
+                    "name":   f"Site R-{i+1}",
+                    "lat":    coords[1],
+                    "lon":    coords[0],
+                    "gps":    round(float(gps), 1),
                     "county": "Utah",
-                    "lst_c": round(gps * 0.4, 1),
-                    "note": f"Real GEE-scored site. GPS: {gps:.1f}"
+                    "lst_c":  round(float(gps) * 0.4, 1),
+                    "note":   f"GEE-scored site. GPS: {float(gps):.1f}"
                 })
             print(f"  Using {len(sites)} real sites from GEE.")
 
