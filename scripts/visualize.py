@@ -185,13 +185,34 @@ def build_map():
     sites = generate_sample_sites()
 
     # Try loading real data if available
+    # scored_path = os.path.join(OUTPUT_DIR, 'scored_sites.geojson')
+    # if os.path.exists(scored_path):
+    #     print("  Loading real scored_sites.geojson...")
+    #     with open(scored_path) as f:
+    #         real_sites = json.load(f)
+            # Parse real features if format matches
+            # (extend this block once GEE export is confirmed)
     scored_path = os.path.join(OUTPUT_DIR, 'scored_sites.geojson')
     if os.path.exists(scored_path):
         print("  Loading real scored_sites.geojson...")
         with open(scored_path) as f:
-            real_sites = json.load(f)
-        # Parse real features if format matches
-        # (extend this block once GEE export is confirmed)
+            real_data = json.load(f)
+        features = real_data.get('features', [])
+        if features:
+            sites = []
+            for i, feat in enumerate(features[:10]):
+                coords = feat['geometry']['coordinates']
+                gps = feat['properties'].get('GPS', 50)
+                sites.append({
+                    "name": f"Site R-{i+1}",
+                    "lat": coords[1],
+                    "lon": coords[0],
+                    "gps": round(gps, 1),
+                    "county": "Utah",
+                    "lst_c": round(gps * 0.4, 1),
+                    "note": f"Real GEE-scored site. GPS: {gps:.1f}"
+                })
+            print(f"  Using {len(sites)} real sites from GEE.")
 
     sites_layer = folium.FeatureGroup(name='Geothermal Sweet Spots (Top 10)')
     for i, site in enumerate(sites, 1):
