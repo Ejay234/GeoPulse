@@ -16,7 +16,9 @@ import pandas as pd
 import geopandas as gpd
 
 
-ee.Initialize(project="gen-lang-client-0356293060")
+KEY_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'gee_key.json')
+credentials = ee.ServiceAccountCredentials(email=None, key_file=KEY_PATH)
+ee.Initialize(credentials)
 
 REGION_KEY = os.environ.get("GEOPULSE_REGION", "southern_utah")
 

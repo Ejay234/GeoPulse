@@ -8,6 +8,7 @@ venv/
 
 # GEE credentials
 .config/earthengine/
+gee_key.json
 
 # Data files (large, download separately)
 data/svi_utah/
