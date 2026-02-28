@@ -365,14 +365,6 @@ def chat():
         print(f"[Gemini] Exception: {e}")
         return jsonify({"reply": f"Error: {str(e)}"}), 200
 
-
-def load_last_params():
-    path = os.path.join(OUTPUT_DIR, 'last_run_params.json')
-    if os.path.exists(path):
-        with open(path) as f:
-            return json.load(f)
-    return DEFAULT_PARAMS.copy()
-
 # Run
 if __name__ == '__main__':
     print("  GeoPulse - Geothermal Sweet Spot Identifier")
