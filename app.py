@@ -49,7 +49,8 @@ pipeline = {
     "step": "",
     "last_run": None,
     "error": None,
-    "progress": 0
+    "progress": 0,
+    "params": DEFAULT_PARAMS.copy()
 }
 
 # Pipline Runner
@@ -106,7 +107,7 @@ def run_pipeline_background(params=None, force=False):
         {
             "name":    "Fetching satellite data & scoring sites",
             "script":  os.path.join(SCRIPTS_DIR, 'scoring.py'),
-            "progress": 65,
+            "progress": 60,
         },
         {
             "name":    "Generating interactive map",
@@ -299,6 +300,78 @@ def load_last_params():
 def check_svi_available():
     svi_path = os.path.join(BASE_DIR, 'data', 'svi_utah')
     return os.path.exists(svi_path) and bool(os.listdir(svi_path))
+
+# Gemini Chat Route
+import urllib.request as _urllib_request
+
+@app.route('/api/chat', methods=['POST'])
+def chat():
+    """
+    Chat messages to Gemini API with current site data as context.
+    Set GEMINI_API_KEY as environment variable before starting the server:
+        export GEMINI_API_KEY=your_key_here
+        python app.py
+    """
+    GEMINI_KEY = os.environ.get("GEMINI_API_KEY", "")
+    if not GEMINI_KEY:
+        return jsonify({"reply": "Gemini API key not configured. Run: export GEMINI_API_KEY=your_key then restart the server."}), 200
+
+    data = request.get_json(silent=True) or {}
+    user_message = data.get("message", "")
+    sites = load_sites()
+    last_params = load_last_params()
+
+    context = f"""You are a geothermal energy analyst assistant for GeoPulse, a satellite-based geothermal site identification tool.
+
+    Current analysis parameters:
+    - Date range: {last_params.get('start_date')} to {last_params.get('end_date')}
+    - Scoring formula: GPS = {last_params.get('weight_lst',0.5)}*LST + {last_params.get('weight_grid',0.3)}*Grid + {last_params.get('weight_svi',0.2)}*SVI
+    - LST = Land Surface Temperature from Landsat 9 satellite (geothermal heat signal)
+    - Grid = Population density proxy for transmission infrastructure proximity
+    - SVI = CDC Social Vulnerability Index (equity layer — prioritizes underserved communities)
+
+    Top scored sites:
+    {chr(10).join([f"  {s['rank']}. {s['name']} — GPS: {s['gps']} at ({s['lat']}, {s['lon']})" for s in sites[:5]])}
+
+    Study region covers Beaver County (validation zone near Utah FORGE EGS facility), Millard County (exploration zone), and Salt Lake County (urban demand center).
+
+    Answer concisely in plain English. Focus on what the data means for real-world geothermal development and climate impact.
+    """
+
+    payload = json.dumps({
+        "contents": [{"parts": [{"text": context + "\n\nUser question: " + user_message}]}]
+    }).encode("utf-8")
+
+    model_id = "gemini-2.5-flash"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_id}:generateContent"
+
+    headers = {
+        "Content-Type": "application/json",
+        "x-goog-api-key": GEMINI_KEY
+    }
+
+    req = _urllib_request.Request(url, data=payload, headers=headers, method="POST")
+
+    try:
+        with _urllib_request.urlopen(req, timeout=15) as resp:
+            result = json.loads(resp.read())
+            reply = result["candidates"][0]["content"]["parts"][0]["text"]
+            return jsonify({"reply": reply})
+    except _urllib_request.HTTPError as e:
+        body = e.read().decode("utf-8")
+        print(f"[Gemini] HTTP {e.code}: {body}")
+        return jsonify({"reply": f"Gemini error {e.code}: {body}"}), 200
+    except Exception as e:
+        print(f"[Gemini] Exception: {e}")
+        return jsonify({"reply": f"Error: {str(e)}"}), 200
+
+
+def load_last_params():
+    path = os.path.join(OUTPUT_DIR, 'last_run_params.json')
+    if os.path.exists(path):
+        with open(path) as f:
+            return json.load(f)
+    return DEFAULT_PARAMS.copy()
 
 # Run
 if __name__ == '__main__':

@@ -17,7 +17,7 @@
 
         /* Header */
         header {
-            background: #0f1117;
+            background: #1a1d27;
             padding: 12px 24px;
             display: flex;
             align-items: center;
@@ -25,81 +25,97 @@
             border-bottom: 2px solid #d73027;
             flex-shrink: 0;
         }
-        .logo { display: flex; align-items: center; gap: 10px; }
+        .logo h1 { font-size: 22px; color: #d73027; font-weight: 700; letter-spacing: 1px; }
         .logo span { font-size: 12px; color: #888; }
         .header-right { display: flex; align-items: center; gap: 16px; font-size: 12px; color: #888; }
-        .status-badge { padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; }
+        .status-badge {
+            padding: 4px 10px; border-radius: 12px;
+            font-size: 11px; font-weight: bold;
+        }
         .status-idle    { background: #2a2d3a; color: #888; }
         .status-running { background: #2a3a1a; color: #8bc34a; }
         .status-done    { background: #1a2a3a; color: #4fc3f7; }
         .status-error   { background: #3a1a1a; color: #ef5350; }
 
         /* Loading Screen */
-        .loading-screen { flex: 1; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 24px; }
+        .loading-screen {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 24px;
+        }
+        .loading-icon { font-size: 64px; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
         .loading-title { font-size: 24px; color: #d73027; font-weight: 700; }
         .loading-step  { font-size: 14px; color: #888; }
-        .progress-bar-outer { width: 360px; height: 8px; background: #2a2d3a; border-radius: 4px; overflow: hidden; }
-        .progress-bar-inner { height: 100%; background: #d73027; border-radius: 4px; transition: width 0.5s ease; }
+        .progress-bar-outer {
+            width: 360px; height: 8px;
+            background: #2a2d3a; border-radius: 4px; overflow: hidden;
+        }
+        .progress-bar-inner {
+            height: 100%; background: #d73027;
+            border-radius: 4px; transition: width 0.5s ease;
+        }
         .loading-note { font-size: 12px; color: #555; text-align: center; max-width: 360px; }
-        .error-box { background: #2a1010; border: 1px solid #d73027; border-radius: 8px; padding: 16px; max-width: 500px; font-size: 12px; color: #ef5350; font-family: monospace; }
+        .error-box {
+            background: #2a1010; border: 1px solid #d73027;
+            border-radius: 8px; padding: 16px; max-width: 500px;
+            font-size: 12px; color: #ef5350; font-family: monospace;
+        }
 
-        /* Main Layout */
+        /* Main Dashboard */
         .main { display: flex; flex: 1; overflow: hidden; }
 
         /* Sidebar */
-        .sidebar { width: 300px; background: #1a1d27; border-right: 1px solid #2a2d3a; display: flex; flex-direction: column; overflow: hidden; flex-shrink: 0; }
-
-        /* Tabs */
-        .tabs { display: flex; border-bottom: 1px solid #2a2d3a; flex-shrink: 0; }
-        .tab { flex: 1; padding: 10px 8px; font-size: 11px; text-align: center; cursor: pointer; color: #666; border-bottom: 2px solid transparent; transition: all 0.2s; }
-        .tab.active { color: #d73027; border-bottom-color: #d73027; }
-        .tab-pane { display: none; flex: 1; overflow-y: auto; }
-        .tab-pane.active { display: flex; flex-direction: column; }
-
-        /* Sidebar sections */
+        .sidebar {
+            width: 300px; background: #1a1d27;
+            border-right: 1px solid #2a2d3a;
+            display: flex; flex-direction: column;
+            overflow-y: auto; flex-shrink: 0;
+        }
         .sidebar-section { padding: 16px; border-bottom: 1px solid #2a2d3a; }
-        .sidebar-section h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #888; margin-bottom: 12px; }
-
-        /* Top site card */
-        .top-site-card { background: linear-gradient(135deg, #1a0a0a, #2a1010); border: 1px solid #d73027; border-radius: 8px; padding: 12px; cursor: pointer; transition: border-color 0.2s; }
-        .top-site-card:hover { border-color: #ff6b5b; }
+        .sidebar-section h3 {
+            font-size: 11px; text-transform: uppercase;
+            letter-spacing: 1px; color: #888; margin-bottom: 12px;
+        }
+        .top-site-card {
+            background: linear-gradient(135deg, #1a0a0a, #2a1010);
+            border: 1px solid #d73027; border-radius: 8px; padding: 12px;
+        }
         .top-site-card .score { font-size: 32px; font-weight: 700; color: #d73027; line-height: 1; }
         .top-site-card .score-label { font-size: 10px; color: #888; margin-bottom: 8px; }
         .top-site-card .name { font-size: 14px; font-weight: 600; color: #fff; }
         .top-site-card .coords { font-size: 11px; color: #888; margin-top: 4px; }
-
-        /* Site list */
-        .site-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid #2a2d3a; cursor: pointer; border-radius: 4px; transition: background 0.15s; }
-        .site-item:hover { background: #22253a; padding: 8px 6px; margin: 0 -6px; }
+        .site-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 8px 0; border-bottom: 1px solid #2a2d3a;
+        }
         .site-item:last-child { border-bottom: none; }
-        .rank-badge { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; flex-shrink: 0; }
+        .rank-badge {
+            width: 24px; height: 24px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 10px; font-weight: bold; flex-shrink: 0; color: #111;
+        }
         .site-info { flex: 1; }
         .site-name  { font-size: 12px; font-weight: 600; color: #e0e0e0; }
         .site-coords { font-size: 10px; color: #666; }
         .site-gps { font-size: 13px; font-weight: 700; }
-
-        /* Formula box */
-        .formula-box { background: #0f1117; border: 1px solid #2a2d3a; border-radius: 6px; padding: 10px 12px; font-size: 12px; line-height: 1.8; }
+        .formula-box {
+            background: #0f1117; border: 1px solid #2a2d3a;
+            border-radius: 6px; padding: 10px 12px; font-size: 12px; line-height: 1.8;
+        }
         .formula { color: #4fc3f7; font-family: monospace; font-size: 11px; }
         .weight-bar { display: flex; height: 6px; border-radius: 3px; overflow: hidden; margin-top: 8px; }
-        .w-lst  { background: #d73027; }
-        .w-grid { background: #fc8d59; }
-        .w-svi  { background: #fee08b; }
-
-        /* Parameters form */
-        .param-group { margin-bottom: 12px; }
-        .param-label { display: flex; justify-content: space-between; font-size: 10px; color: #888; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.8px; }
-        .param-label span { color: #d73027; font-weight: bold; }
-        input[type=range] { width: 100%; accent-color: #d73027; cursor: pointer; }
-        input[type=date], input[type=number] { width: 100%; background: #0f1117; border: 1px solid #2a2d3a; color: #e0e0e0; padding: 6px 8px; border-radius: 4px; font-size: 12px; }
-        input:focus { outline: none; border-color: #d73027; }
-        .range-hints { display: flex; justify-content: space-between; font-size: 9px; color: #555; margin-top: 2px; }
-        .svi-notice { padding: 10px; border-radius: 6px; font-size: 11px; line-height: 1.6; border: 1px solid #b8860b; background: rgba(184,134,11,0.08); color: #d4a017; }
-        .svi-notice.ok { border-color: #2e7d32; background: rgba(46,125,50,0.08); color: #66bb6a; }
-        .svi-notice a { color: #ffd700; }
-
-        /* Run button */
-        .run-btn { width: 100%; padding: 10px; background: #d73027; color: white; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+        .w-lst  { background: #d73027; flex: 5; }
+        .w-grid { background: #fc8d59; flex: 3; }
+        .w-svi  { background: #fee08b; flex: 2; }
+        .run-btn {
+            width: 100%; padding: 10px; background: #d73027;
+            color: white; border: none; border-radius: 6px;
+            font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.2s;
+        }
         .run-btn:hover { background: #b71c1c; }
         .run-btn:disabled { background: #444; cursor: not-allowed; }
         .run-status { font-size: 11px; color: #888; margin-top: 8px; min-height: 16px; }
@@ -108,34 +124,35 @@
         .map-container { flex: 1; position: relative; }
         .map-container iframe { width: 100%; height: 100%; border: none; }
 
+        /* Reset button */
+        .reset-btn { background: none; border: 1px solid #2a2d3a; color: #888; padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; width: 100%; margin-bottom: 10px; transition: all 0.2s; }
+        .reset-btn:hover { border-color: #d73027; color: #d73027; }
+
+        /* Gemini Chat Panel */
+        .chat-panel { width: 300px; background: #1a1d27; border-left: 1px solid #2a2d3a; display: flex; flex-direction: column; flex-shrink: 0; }
+        .chat-header { padding: 12px 16px; border-bottom: 1px solid #2a2d3a; flex-shrink: 0; }
+        .chat-header h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #888; }
+        .chat-header p { font-size: 10px; color: #555; margin-top: 3px; }
+        .chat-messages { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+        .chat-msg { font-size: 12px; line-height: 1.6; padding: 8px 10px; border-radius: 6px; }
+        .chat-msg.user { background: #1e2a3a; color: #c0d0e8; align-self: flex-end; max-width: 90%; }
+        .chat-msg.gemini { background: #0f1117; border: 1px solid #2a2d3a; color: #c8d0e0; align-self: flex-start; max-width: 95%; }
+        .chat-msg.thinking { color: #555; font-style: italic; }
+        .chat-input-row { padding: 10px 12px; border-top: 1px solid #2a2d3a; display: flex; gap: 8px; flex-shrink: 0; }
+        .chat-input { flex: 1; background: #0f1117; border: 1px solid #2a2d3a; color: #e0e0e0; padding: 7px 10px; border-radius: 4px; font-size: 12px; font-family: 'Segoe UI', Arial, sans-serif; resize: none; }
+        .chat-input:focus { outline: none; border-color: #d73027; }
+        .chat-send { background: #d73027; color: white; border: none; border-radius: 4px; padding: 7px 12px; font-size: 12px; cursor: pointer; flex-shrink: 0; }
+        .chat-send:hover { background: #b71c1c; }
+        .chat-send:disabled { background: #444; cursor: not-allowed; }
+        .chat-suggestions { padding: 0 12px 10px; display: flex; flex-direction: column; gap: 4px; }
+        .suggestion { background: #0f1117; border: 1px solid #2a2d3a; color: #888; padding: 5px 8px; border-radius: 4px; font-size: 10px; cursor: pointer; text-align: left; transition: all 0.15s; }
+        .suggestion:hover { border-color: #d73027; color: #e0e0e0; }
+
         /* Color helpers */
         .c-red    { color: #d73027; } .bg-red    { background: #d73027; }
         .c-orange { color: #fc8d59; } .bg-orange { background: #fc8d59; }
         .c-yellow { color: #e6b800; } .bg-yellow { background: #fee08b; }
         .c-green  { color: #91cf60; } .bg-green  { background: #91cf60; }
-
-        /* Site Detail Modal */
-        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
-        .modal-overlay.open { display: flex; }
-        .modal { background: #1a1d27; border: 1px solid #2a2d3a; border-radius: 12px; width: 480px; max-width: 90vw; overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,0.6); animation: modalIn 0.2s ease; }
-        @keyframes modalIn { from { opacity:0; transform:scale(0.95); } to { opacity:1; transform:scale(1); } }
-        .modal-header { padding: 20px 24px 16px; border-bottom: 1px solid #2a2d3a; display: flex; justify-content: space-between; align-items: flex-start; }
-        .modal-score-big { font-size: 48px; font-weight: 700; line-height: 1; }
-        .modal-score-label { font-size: 10px; color: #888; letter-spacing: 1px; margin-top: 2px; }
-        .modal-site-name { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 2px; }
-        .modal-coords-text { font-size: 11px; color: #666; }
-        .modal-close { background: none; border: none; color: #666; font-size: 20px; cursor: pointer; padding: 4px; }
-        .modal-close:hover { color: #fff; }
-        .modal-body { padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; }
-        .breakdown-title { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
-        .breakdown-row { margin-bottom: 10px; }
-        .breakdown-label { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; }
-        .breakdown-label span:last-child { font-weight: 700; }
-        .breakdown-bar-outer { height: 6px; background: #2a2d3a; border-radius: 3px; overflow: hidden; }
-        .breakdown-bar-inner { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
-        .meaning-box { background: #0f1117; border: 1px solid #2a2d3a; border-radius: 8px; padding: 14px; font-size: 12px; line-height: 1.7; color: #c0c8d8; }
-        .meaning-box strong { color: #fff; }
-        .meaning-tag { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 700; margin-right: 4px; margin-bottom: 4px; }
     </style>
 </head>
 <body>
@@ -143,45 +160,45 @@
 <!-- Header -->
 <header>
     <div class="logo">
-        <!-- Minimal Eco Logo (GeoPulse) — generated by ChatGPT (OpenAI) -->
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 220" role="img" aria-label="GeoPulse logo"
-            style="height:50px; width:auto; display:block;">
-            <defs>
-            <linearGradient id="ecoGrad" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#1B9E77"/>
-                <stop offset="100%" stop-color="#66A61E"/>
-            </linearGradient>
-            <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-                <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000000" flood-opacity="0.12"/>
-            </filter>
-            </defs>
-            <g transform="translate(40,30)" filter="url(#shadow)">
-            <circle cx="80" cy="80" r="64" fill="none" stroke="url(#ecoGrad)" stroke-width="14" stroke-linecap="round"/>
-            <path d="M26 82 L52 82 L62 66 L74 104 L88 74 L98 82 L134 82"
-                    fill="none" stroke="#0B1B2A" stroke-opacity="0.85"
-                    stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M26 82 L62 82 L62 66 L74 104 L88 74 L134 82"
-                    fill="none" stroke="url(#ecoGrad)"
-                    stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-            </g>
-            <g transform="translate(200,68)">
-            <text x="0" y="70"
-                    font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial"
-                    font-size="76" font-weight="750" letter-spacing="-1.2" fill="#1B9E77">
-                Geo<tspan fill="url(#ecoGrad)">Pulse</tspan>
-            </text>
-            </g>
-        </svg>
-    </div>
+    <!-- Minimal Eco Logo (GeoPulse) — generated by ChatGPT (OpenAI) -->
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 220" role="img" aria-label="GeoPulse logo"
+        style="height:50px; width:auto; display:block;">
+        <defs>
+        <linearGradient id="ecoGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#1B9E77"/>
+            <stop offset="100%" stop-color="#66A61E"/>
+        </linearGradient>
+        <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000000" flood-opacity="0.12"/>
+        </filter>
+        </defs>
+        <g transform="translate(40,30)" filter="url(#shadow)">
+        <circle cx="80" cy="80" r="64" fill="none" stroke="url(#ecoGrad)" stroke-width="14" stroke-linecap="round"/>
+        <path d="M26 82 L52 82 L62 66 L74 104 L88 74 L98 82 L134 82"
+                fill="none" stroke="#0B1B2A" stroke-opacity="0.85"
+                stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M26 82 L62 82 L62 66 L74 104 L88 74 L134 82"
+                fill="none" stroke="url(#ecoGrad)"
+                stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
+        <g transform="translate(200,68)">
+        <text x="0" y="70"
+                font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial"
+                font-size="76" font-weight="750" letter-spacing="-1.2" fill="#1B9E77">
+            Geo<tspan fill="url(#ecoGrad)">Pulse</tspan>
+        </text>
+        </g>
+    </svg>
+</div>
     <div class="header-right">
         {% if last_run %}<span>Last run: {{ last_run }}</span>{% endif %}
         <span class="status-badge status-{{ status }}" id="statusBadge">{{ status.upper() }}</span>
     </div>
 </header>
 
-<!-- Loading Screen -->
+<!-- Loading Screen (shown while pipeline is running) -->
 {% if status == 'running' %}
-<div class="loading-screen">
+<div class="loading-screen" id="loadingScreen">
     <div class="loading-title">Analyzing Satellite Data...</div>
     <div class="loading-step" id="loadingStep">{{ step }}</div>
     <div class="progress-bar-outer">
@@ -199,365 +216,237 @@
 <div class="loading-screen">
     <div class="loading-title" style="color:#ef5350;">Pipeline Error</div>
     <div class="loading-step">{{ step }}</div>
-    {% if error %}<div class="error-box">{{ error }}</div>{% endif %}
-    <button class="run-btn" style="width:200px;" onclick="submitRun()">Retry</button>
+    {% if error %}
+    <div class="error-box">{{ error }}</div>
+    {% endif %}
+    <button class="run-btn" style="width:200px;" onclick="triggerRun()">Retry</button>
 </div>
 
 <!-- Main Dashboard -->
 {% else %}
-<div class="main">
+<div class="main" id="dashboard">
+
     <div class="sidebar">
 
-        <!-- Tabs -->
-        <div class="tabs">
-            <div class="tab active" onclick="switchTab('sites', this)">Sites ({{ sites|length }})</div>
-            <div class="tab" onclick="switchTab('params', this)">Parameters</div>
+        <!-- Top Site -->
+        {% if top_site %}
+        <div class="sidebar-section">
+            <h3>Top Candidate Site</h3>
+            <div class="top-site-card">
+                <div class="score">{{ top_site.gps }}</div>
+                <div class="score-label">GPS SCORE / 100</div>
+                <div class="name">{{ top_site.name }}</div>
+                <div class="coords">{{ top_site.lat }}, {{ top_site.lon }}</div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Site List -->
+        <div class="sidebar-section">
+            <h3>Candidate Sites ({{ sites|length }})</h3>
+            {% for site in sites %}
+                {% set gps = site.gps %}
+                {% if gps >= 85 %}{% set cc='c-red' %}{% set bc='bg-red' %}
+                {% elif gps >= 70 %}{% set cc='c-orange' %}{% set bc='bg-orange' %}
+                {% elif gps >= 60 %}{% set cc='c-yellow' %}{% set bc='bg-yellow' %}
+                {% else %}{% set cc='c-green' %}{% set bc='bg-green' %}{% endif %}
+            <div class="site-item">
+                <div class="rank-badge {{ bc }}">{{ site.rank }}</div>
+                <div class="site-info">
+                    <div class="site-name">{{ site.name }}</div>
+                    <div class="site-coords">{{ site.lat }}, {{ site.lon }}</div>
+                </div>
+                <div class="site-gps {{ cc }}">{{ site.gps }}</div>
+            </div>
+            {% else %}
+            <p style="font-size:12px; color:#666;">No sites yet. Run the pipeline.</p>
+            {% endfor %}
         </div>
 
-        <!-- Sites Tab -->
-        <div class="tab-pane active" id="tab-sites">
-
-            <!-- Top Site -->
-            {% if top_site %}
-            <div class="sidebar-section">
-                <h3>Top Candidate Site</h3>
-                <div class="top-site-card" onclick="openModal({{ top_site | tojson }})">
-                    <div class="score">{{ top_site.gps }}</div>
-                    <div class="score-label">GPS SCORE / 100 — Click for details</div>
-                    <div class="name">{{ top_site.name }}</div>
-                    <div class="coords">{{ top_site.lat }}, {{ top_site.lon }}</div>
+        <!-- Formula -->
+        <div class="sidebar-section">
+            <h3>Scoring Formula</h3>
+            <div class="formula-box">
+                <div class="formula">GPS = 0.5×LST + 0.3×Grid + 0.2×SVI</div>
+                <div class="weight-bar">
+                    <div class="w-lst"></div>
+                    <div class="w-grid"></div>
+                    <div class="w-svi"></div>
+                </div>
+                <div style="display:flex; gap:8px; margin-top:6px; font-size:10px;">
+                    <span class="c-red">■ LST 50%</span>
+                    <span class="c-orange">■ Grid 30%</span>
+                    <span class="c-yellow">■ SVI 20%</span>
                 </div>
             </div>
-            {% endif %}
+        </div>
 
-            <!-- Site List -->
-            <div class="sidebar-section">
-                <h3>Candidate Sites ({{ sites|length }})</h3>
-                {% for site in sites %}
-                    {% set gps = site.gps %}
-                    {% if gps >= 85 %}{% set cc='c-red' %}{% set bc='bg-red' %}
-                    {% elif gps >= 70 %}{% set cc='c-orange' %}{% set bc='bg-orange' %}
-                    {% elif gps >= 60 %}{% set cc='c-yellow' %}{% set bc='bg-yellow' %}
-                    {% else %}{% set cc='c-green' %}{% set bc='bg-green' %}{% endif %}
-                <div class="site-item" onclick="openModal({{ site | tojson }})">
-                    <div class="rank-badge {{ bc }}" style="color:#111;">{{ site.rank }}</div>
-                    <div class="site-info">
-                        <div class="site-name">{{ site.name }}</div>
-                        <div class="site-coords">{{ site.lat }}, {{ site.lon }}</div>
-                    </div>
-                    <div class="site-gps {{ cc }}">{{ site.gps }}</div>
-                </div>
-                {% else %}
-                <p style="font-size:12px; color:#666;">No sites yet. Run the pipeline.</p>
-                {% endfor %}
-            </div>
-
-            <!-- Formula -->
-            <div class="sidebar-section">
-                <h3>Scoring Formula</h3>
-                <div class="formula-box">
-                    <div class="formula">GPS = 0.5xLST + 0.3xGrid + 0.2xSVI</div>
-                    <div class="weight-bar" style="margin-top:8px;">
-                        <div class="w-lst"  style="flex:5"></div>
-                        <div class="w-grid" style="flex:3"></div>
-                        <div class="w-svi"  style="flex:2"></div>
-                    </div>
-                    <div style="display:flex; gap:8px; margin-top:6px; font-size:10px;">
-                        <span class="c-red">LST 50%</span>
-                        <span class="c-orange">Grid 30%</span>
-                        <span class="c-yellow">SVI 20%</span>
-                    </div>
-                </div>
-            </div>
-
-        </div><!-- /tab-sites -->
-
-        <!-- Parameters Tab -->
-        <div class="tab-pane" id="tab-params">
-            <div class="sidebar-section">
-
-                <!-- SVI status -->
-                {% if svi_available %}
-                <div class="svi-notice ok" style="margin-bottom:14px;">SVI equity data loaded and active.</div>
-                {% else %}
-                <div class="svi-notice" style="margin-bottom:14px;">
-                    SVI data missing. Equity layer uses neutral value (50).<br>
-                    <a href="https://www.atsdr.cdc.gov/placeandhealth/svi/data_documentation_download.html" target="_blank">
-                        Download CDC SVI — Utah 2022 — ESRI Geodatabase
-                    </a>
-                    — unzip into <code>data/svi_utah/</code>
-                </div>
-                {% endif %}
-
-                <!-- Date Range -->
-                <div class="param-group">
-                    <div class="param-label">Start Date</div>
-                    <input type="date" id="start_date" value="{{ params.start_date or '2023-05-01' }}">
-                </div>
-                <div class="param-group">
-                    <div class="param-label">End Date</div>
-                    <input type="date" id="end_date" value="{{ params.end_date or '2024-09-30' }}">
-                </div>
-
-                <!-- Cloud Cover -->
-                <div class="param-group">
-                    <div class="param-label">Max Cloud Cover <span id="cloud_val">{{ params.cloud_cover or 20 }}%</span></div>
-                    <input type="range" id="cloud_cover" min="5" max="50" step="5"
-                        value="{{ params.cloud_cover or 20 }}"
-                        oninput="document.getElementById('cloud_val').textContent=this.value+'%'">
-                    <div class="range-hints"><span>5% strict</span><span>50% lenient</span></div>
-                </div>
-
-                <!-- Weights -->
-                <div class="param-group">
-                    <div class="param-label">LST Weight <span id="lst_val">{{ "%.0f"|format((params.weight_lst or 0.5)*100) }}%</span></div>
-                    <input type="range" id="weight_lst" min="0.1" max="0.8" step="0.05"
-                        value="{{ params.weight_lst or 0.5 }}" oninput="updateWeights()">
-                </div>
-                <div class="param-group">
-                    <div class="param-label">Grid Proximity Weight <span id="grid_val">{{ "%.0f"|format((params.weight_grid or 0.3)*100) }}%</span></div>
-                    <input type="range" id="weight_grid" min="0.05" max="0.6" step="0.05"
-                        value="{{ params.weight_grid or 0.3 }}" oninput="updateWeights()">
-                </div>
-                <div class="param-group">
-                    <div class="param-label">SVI Equity Weight <span id="svi_val">{{ "%.0f"|format((params.weight_svi or 0.2)*100) }}%</span></div>
-                    <input type="range" id="weight_svi" min="0.0" max="0.5" step="0.05"
-                        value="{{ params.weight_svi or 0.2 }}" oninput="updateWeights()">
-                </div>
-
-                <!-- Live weight bar -->
-                <div class="weight-bar" style="margin-bottom:4px;">
-                    <div class="w-lst"  id="bar_lst"  style="flex:{{ params.weight_lst or 0.5 }}; transition:flex 0.3s;"></div>
-                    <div class="w-grid" id="bar_grid" style="flex:{{ params.weight_grid or 0.3 }}; transition:flex 0.3s;"></div>
-                    <div class="w-svi"  id="bar_svi"  style="flex:{{ params.weight_svi or 0.2 }}; transition:flex 0.3s;"></div>
-                </div>
-                <div style="display:flex; gap:10px; font-size:10px; margin-bottom:14px;">
-                    <span class="c-red">LST</span>
-                    <span class="c-orange">Grid</span>
-                    <span class="c-yellow">SVI</span>
-                </div>
-
-                <!-- Number of sites -->
-                <div class="param-group">
-                    <div class="param-label">Number of Sites</div>
-                    <input type="number" id="num_sites" min="3" max="25" value="{{ params.num_sites or 10 }}">
-                </div>
-
-                <!-- Percentile -->
-                <div class="param-group">
-                    <div class="param-label">Score Percentile Cutoff <span id="pct_val">{{ params.percentile or 70 }}th</span></div>
-                    <input type="range" id="percentile" min="50" max="95" step="5"
-                        value="{{ params.percentile or 70 }}"
-                        oninput="document.getElementById('pct_val').textContent=this.value+'th'">
-                    <div class="range-hints"><span>50th (many sites)</span><span>95th (best only)</span></div>
-                </div>
-
-                <!-- Run -->
-                <button class="run-btn" id="runBtn" onclick="submitRun()">
-                    Run Analysis with These Settings
-                </button>
-                <div class="run-status" id="runStatus">Re-fetches Landsat data, rescores, regenerates map (~3-5 min).</div>
-
-            </div>
-        </div><!-- /tab-params -->
+        <!-- Run Pipeline -->
+        <div class="sidebar-section">
+            <h3>Pipeline Control</h3>
+            <button class="reset-btn" onclick="resetDefaults()">Reset to Defaults</button>
+            <button class="run-btn" id="runBtn" onclick="triggerRun()">
+                Run Fresh Analysis
+            </button>
+            <div class="run-status" id="runStatus"></div>
+            <p style="font-size:10px; color:#555; margin-top:8px;">
+                Re-fetches latest Landsat data from GEE, rescores all sites,
+                and regenerates the map (~3&ndash;5 min).
+            </p>
+        </div>
 
     </div><!-- /sidebar -->
 
     <div class="map-container">
         <iframe src="/map" id="mapFrame"></iframe>
     </div>
-</div>
 
-<!-- Site Detail Modal -->
-<div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
-    <div class="modal">
-        <div class="modal-header">
-            <div>
-                <div class="modal-site-name" id="m-name">Site</div>
-                <div class="modal-coords-text" id="m-coords"></div>
-            </div>
-            <div style="text-align:right;">
-                <div class="modal-score-big" id="m-score">--</div>
-                <div class="modal-score-label">GPS / 100</div>
-            </div>
-            <button class="modal-close" onclick="closeModal()">x</button>
+    <!-- Gemini Chat Panel -->
+    <div class="chat-panel">
+        <div class="chat-header">
+            <h3>AI Analyst — Gemini</h3>
+            <p>Ask questions about the geothermal data</p>
         </div>
-        <div class="modal-body">
 
-            <!-- Score Breakdown -->
-            <div>
-                <div class="breakdown-title">Score Breakdown</div>
-                <div class="breakdown-row">
-                    <div class="breakdown-label">
-                        <span>Land Surface Temperature (LST)</span>
-                        <span class="c-red" id="m-lst-pct">-</span>
-                    </div>
-                    <div class="breakdown-bar-outer"><div class="breakdown-bar-inner" id="m-lst-bar" style="background:#d73027;width:0%"></div></div>
-                </div>
-                <div class="breakdown-row">
-                    <div class="breakdown-label">
-                        <span>Grid Proximity</span>
-                        <span class="c-orange" id="m-grid-pct">-</span>
-                    </div>
-                    <div class="breakdown-bar-outer"><div class="breakdown-bar-inner" id="m-grid-bar" style="background:#fc8d59;width:0%"></div></div>
-                </div>
-                <div class="breakdown-row">
-                    <div class="breakdown-label">
-                        <span>Social Vulnerability Index (SVI)</span>
-                        <span class="c-yellow" id="m-svi-pct">-</span>
-                    </div>
-                    <div class="breakdown-bar-outer"><div class="breakdown-bar-inner" id="m-svi-bar" style="background:#fee08b;width:0%"></div></div>
-                </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="chat-msg gemini">
+                Hello! I'm your GeoPulse analyst. I can explain the scoring methodology, interpret site results, or help you understand what the satellite data means for geothermal development. What would you like to know?
             </div>
+        </div>
 
-            <!-- Interpretation -->
-            <div class="meaning-box" id="m-meaning"></div>
+        <!-- Quick suggestion buttons -->
+        <div class="chat-suggestions" id="chatSuggestions">
+            <button class="suggestion" onclick="sendSuggestion(this)">Why is Beaver County ranked highest?</button>
+            <button class="suggestion" onclick="sendSuggestion(this)">Explain the GPS scoring formula</button>
+            <button class="suggestion" onclick="sendSuggestion(this)">What does the SVI equity layer mean?</button>
+            <button class="suggestion" onclick="sendSuggestion(this)">How does LST indicate geothermal potential?</button>
+        </div>
 
-            <!-- Tags -->
-            <div id="m-tags"></div>
-
+        <div class="chat-input-row">
+            <textarea class="chat-input" id="chatInput" rows="2" placeholder="Ask about the data..."
+                onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault();sendChat();}"></textarea>
+            <button class="chat-send" id="chatSend" onclick="sendChat()">Send</button>
         </div>
     </div>
-</div>
 
+</div><!-- /main -->
 {% endif %}
 
 <script>
-    // Tab switching
-    function switchTab(name, el) {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.tab-pane').forEach(t => t.classList.remove('active'));
-        el.classList.add('active');
-        document.getElementById('tab-' + name).classList.add('active');
-    }
-
-    // Live weight bar update
-    function updateWeights() {
-        const lst  = parseFloat(document.getElementById('weight_lst').value);
-        const grid = parseFloat(document.getElementById('weight_grid').value);
-        const svi  = parseFloat(document.getElementById('weight_svi').value);
-        document.getElementById('lst_val').textContent  = Math.round(lst*100)  + '%';
-        document.getElementById('grid_val').textContent = Math.round(grid*100) + '%';
-        document.getElementById('svi_val').textContent  = Math.round(svi*100)  + '%';
-        document.getElementById('bar_lst').style.flex   = lst;
-        document.getElementById('bar_grid').style.flex  = grid;
-        document.getElementById('bar_svi').style.flex   = svi;
-    }
-
-    // Submit run with parameters
-    function submitRun() {
-        const btn = document.getElementById('runBtn');
-        const statusEl = document.getElementById('runStatus');
-        if (btn) { btn.disabled = true; btn.textContent = 'Starting...'; }
-        if (statusEl) statusEl.textContent = 'Sending parameters...';
-
-        const params = {
-            start_date:  document.getElementById('start_date').value,
-            end_date:    document.getElementById('end_date').value,
-            cloud_cover: parseInt(document.getElementById('cloud_cover').value),
-            weight_lst:  parseFloat(document.getElementById('weight_lst').value),
-            weight_grid: parseFloat(document.getElementById('weight_grid').value),
-            weight_svi:  parseFloat(document.getElementById('weight_svi').value),
-            num_sites:   parseInt(document.getElementById('num_sites').value),
-            percentile:  parseInt(document.getElementById('percentile').value),
-        };
-
-        fetch('/run', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(params) })
-            .then(r => r.json())
-            .then(() => { if (statusEl) statusEl.textContent = 'Pipeline started - reloading...'; setTimeout(() => location.reload(), 1500); })
-            .catch(() => {
-                if (statusEl) statusEl.textContent = 'Error starting pipeline.';
-                if (btn) { btn.disabled = false; btn.textContent = 'Run Analysis with These Settings'; }
-            });
-    }
-
-    // Poll while running
+    // Polls /api/status every 3 seconds, updates progress bar + step text,
+    // and reloads the page when pipeline completes.
     {% if status == 'running' %}
     function pollStatus() {
-        fetch('/api/status').then(r => r.json()).then(data => {
-            const stepEl = document.getElementById('loadingStep');
-            const bar    = document.getElementById('progressBar');
-            const badge  = document.getElementById('statusBadge');
-            if (stepEl) stepEl.textContent = data.step || '';
-            if (bar)    bar.style.width    = (data.progress || 0) + '%';
-            if (badge)  { badge.textContent = data.status.toUpperCase(); badge.className = 'status-badge status-' + data.status; }
-            if (data.status === 'done' || data.status === 'error') location.reload();
-            else setTimeout(pollStatus, 3000);
-        }).catch(() => setTimeout(pollStatus, 5000));
+        fetch('/api/status')
+            .then(r => r.json())
+            .then(data => {
+                // Update step text
+                const stepEl = document.getElementById('loadingStep');
+                if (stepEl) stepEl.textContent = data.step || '';
+
+                // Update progress bar
+                const bar = document.getElementById('progressBar');
+                if (bar) bar.style.width = (data.progress || 0) + '%';
+
+                // Update status badge
+                const badge = document.getElementById('statusBadge');
+                if (badge) {
+                    badge.textContent = data.status.toUpperCase();
+                    badge.className = 'status-badge status-' + data.status;
+                }
+
+                if (data.status === 'done' || data.status === 'error') {
+                    // Pipeline finished — reload to show dashboard or error screen
+                    location.reload();
+                } else {
+                    // Still running — poll again in 3 seconds
+                    setTimeout(pollStatus, 3000);
+                }
+            })
+            .catch(() => setTimeout(pollStatus, 5000)); // retry on network error
     }
+
+    // Start polling immediately
     pollStatus();
     {% endif %}
 
-    // Site detail modal
-    function openModal(site) {
-        const gps = parseFloat(site.gps) || 0;
-        const wLst  = parseFloat((document.getElementById('weight_lst')  || {value:'0.5'}).value);
-        const wGrid = parseFloat((document.getElementById('weight_grid') || {value:'0.3'}).value);
-        const wSvi  = parseFloat((document.getElementById('weight_svi')  || {value:'0.2'}).value);
-        const total = wLst + wGrid + wSvi;
-
-        const lstPts  = Math.round(gps * (wLst  / total));
-        const gridPts = Math.round(gps * (wGrid / total));
-        const sviPts  = Math.round(gps * (wSvi  / total));
-
-        const color = gps >= 85 ? '#d73027' : gps >= 70 ? '#fc8d59' : gps >= 60 ? '#e6b800' : '#91cf60';
-
-        document.getElementById('m-name').textContent   = site.name;
-        document.getElementById('m-coords').textContent = site.lat + ', ' + site.lon;
-        document.getElementById('m-score').textContent  = gps;
-        document.getElementById('m-score').style.color  = color;
-
-        setTimeout(() => {
-            document.getElementById('m-lst-pct').textContent  = lstPts  + ' pts';
-            document.getElementById('m-grid-pct').textContent = gridPts + ' pts';
-            document.getElementById('m-svi-pct').textContent  = sviPts  + ' pts';
-            document.getElementById('m-lst-bar').style.width  = lstPts  + '%';
-            document.getElementById('m-grid-bar').style.width = gridPts + '%';
-            document.getElementById('m-svi-bar').style.width  = sviPts  + '%';
-        }, 50);
-
-        let tier, meaning, action;
-        if (gps >= 85) {
-            tier = 'Excellent — Priority 1 Candidate';
-            meaning = '<strong>This site shows a significant thermal anomaly consistent with geothermal activity.</strong> Proximity to existing infrastructure reduces transmission build-out costs substantially. This site warrants immediate on-site geological survey.';
-            action = 'Recommended next step: Ground-truth survey + drill test';
-        } else if (gps >= 70) {
-            tier = 'Very Good — Strong Potential';
-            meaning = '<strong>Strong geothermal signal with good infrastructure access.</strong> LST data indicates above-average surface heat flux. A moderate investment in transmission infrastructure could make this site commercially viable within 3-5 years.';
-            action = 'Recommended next step: Seismic survey + feasibility study';
-        } else if (gps >= 60) {
-            tier = 'Good — Community Benefit Candidate';
-            meaning = '<strong>Moderate geothermal signal with community benefit potential.</strong> The equity weighting highlights nearby communities with high energy burden. A lower-capacity plant could deliver meaningful rate stabilization.';
-            action = 'Recommended next step: Community engagement + resource mapping';
-        } else {
-            tier = 'Moderate — Corridor Site';
-            meaning = '<strong>Marginal geothermal signal, included for grid coverage.</strong> This site may serve as a transmission corridor node connecting higher-scoring southern sites to Salt Lake City demand centers.';
-            action = 'Recommended next step: Grid connectivity analysis';
-        }
-
-        document.getElementById('m-meaning').innerHTML =
-            '<strong>Tier: <span style="color:' + color + '">' + tier + '</span></strong><br><br>' +
-            meaning + '<br><br>' +
-            '<span style="font-size:11px;color:#888;">-- ' + action + '</span>';
-
-        const tags = [];
-        if (lstPts  >= gridPts && lstPts  >= sviPts)  tags.push(['Heat-Driven',    '#d73027']);
-        if (gridPts >= lstPts  && gridPts >= sviPts)  tags.push(['Grid-Proximate', '#fc8d59']);
-        if (sviPts  >= lstPts  && sviPts  >= gridPts) tags.push(['Equity-Priority','#e6b800']);
-        if (site.lat < 38.5)       tags.push(['Beaver County',     '#888']);
-        else if (site.lat < 39.5)  tags.push(['Millard County',    '#888']);
-        else                       tags.push(['Salt Lake Region',   '#888']);
-
-        document.getElementById('m-tags').innerHTML = tags.map(([label, c]) =>
-            '<span class="meaning-tag" style="background:' + c + '22;color:' + c + ';border:1px solid ' + c + '44">' + label + '</span>'
-        ).join('');
-
-        document.getElementById('modalOverlay').classList.add('open');
+    // Reset parameters to defaults
+    function resetDefaults() {
+        document.getElementById('start_date').value  = '2023-05-01';
+        document.getElementById('end_date').value    = '2024-09-30';
+        document.getElementById('cloud_cover').value = 20;
+        document.getElementById('weight_lst').value  = 0.5;
+        document.getElementById('weight_grid').value = 0.3;
+        document.getElementById('weight_svi').value  = 0.2;
+        document.getElementById('num_sites').value   = 10;
+        document.getElementById('percentile').value  = 70;
+        document.getElementById('cloud_val').textContent = '20%';
+        document.getElementById('pct_val').textContent   = '70th';
+        updateWeights();
     }
 
-    function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
-    function closeModalOutside(e) { if (e.target.id === 'modalOverlay') closeModal(); }
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+    // Gemini chat
+    function sendSuggestion(btn) {
+        document.getElementById('chatInput').value = btn.textContent;
+        document.getElementById('chatSuggestions').style.display = 'none';
+        sendChat();
+    }
+
+    function sendChat() {
+        const input = document.getElementById('chatInput');
+        const msg = input.value.trim();
+        if (!msg) return;
+
+        const messages = document.getElementById('chatMessages');
+        const sendBtn  = document.getElementById('chatSend');
+
+        // Add user message
+        messages.innerHTML += '<div class="chat-msg user">' + msg + '</div>';
+        messages.innerHTML += '<div class="chat-msg thinking" id="thinkingMsg">Analyzing data...</div>';
+        messages.scrollTop = messages.scrollHeight;
+        input.value = '';
+        sendBtn.disabled = true;
+
+        fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: msg })
+        })
+        .then(r => r.json())
+        .then(data => {
+            const thinking = document.getElementById('thinkingMsg');
+            if (thinking) thinking.remove();
+            messages.innerHTML += '<div class="chat-msg gemini">' + data.reply.replace(/\n/g, '<br>') + '</div>';
+            messages.scrollTop = messages.scrollHeight;
+            sendBtn.disabled = false;
+        })
+        .catch(() => {
+            const thinking = document.getElementById('thinkingMsg');
+            if (thinking) thinking.textContent = 'Error connecting to Gemini. Check your API key.';
+            sendBtn.disabled = false;
+        });
+    }
+
+    // Trigger fresh pipeline run
+    function triggerRun() {
+        const btn = document.getElementById('runBtn');
+        const statusEl = document.getElementById('runStatus');
+
+        if (btn) { btn.disabled = true; btn.textContent = 'Starting...'; }
+        if (statusEl) statusEl.textContent = 'Sending request...';
+
+        fetch('/run', { method: 'POST' })
+            .then(r => r.json())
+            .then(data => {
+                if (statusEl) statusEl.textContent = 'Pipeline started — reloading...';
+                // Reload after short delay so server has time to update state
+                setTimeout(() => location.reload(), 1500);
+            })
+            .catch(() => {
+                if (statusEl) statusEl.textContent = 'Error starting pipeline.';
+                if (btn) { btn.disabled = false; btn.textContent = 'Run Fresh Analysis'; }
+            });
+    }
 </script>
 
 </body>
