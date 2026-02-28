@@ -23,6 +23,21 @@ import geopandas as gpd
 import pandas as pd
 import numpy as np
 
+HM_RADIUS  = int(float(os.environ.get("GEOPULSE_HM_RADIUS",  "25")))
+HM_BLUR    = int(float(os.environ.get("GEOPULSE_HM_BLUR",    "15")))
+HM_OPACITY = float(os.environ.get("GEOPULSE_HM_OPACITY", "0.3"))
+MIN_GPS    = float(os.environ.get("GEOPULSE_MIN_GPS",    "0"))
+REGION_KEY = os.environ.get("GEOPULSE_REGION", "southern_utah")
+REGION_VIEW = {
+    "southern_utah":  (38.2, -113.0, 8),
+    "central_utah":   (39.5, -112.5, 8),
+    "northern_utah":  (40.7, -112.0, 8),
+    "all_utah":       (39.5, -111.5, 7),
+    "great_basin":    (38.0, -115.0, 7),
+    "custom":         (39.5, -111.5, 7),
+}
+_center_lat, _center_lon, _zoom = REGION_VIEW.get(REGION_KEY, (39.0, -112.8, 7))
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUTPUT_DIR = os.path.join(BASE_DIR, 'outputs')
 DATA_DIR = os.path.join(BASE_DIR, 'data')
@@ -106,10 +121,14 @@ def score_to_color(gps):
     """
     Map GPS score to color (red = highest potential)
     """
-    if gps >= 85:   return '#d73027'  # deep red
-    elif gps >= 70: return '#fc8d59'  # orange-red
-    elif gps >= 60: return '#fee08b'  # yellow
-    else:           return '#91cf60'  # green
+    if gps >= 85:
+        return '#d73027'
+    elif gps >= 70: 
+        return '#fc8d59'
+    elif gps >= 60: 
+        return '#fee08b'
+    else:           
+        return '#91cf60'
 
 
 def build_map():
@@ -118,8 +137,8 @@ def build_map():
 
     # Center map on study region
     m = folium.Map(
-        location=[39.0, -112.8],
-        zoom_start=7,
+        location=[_center_lat, _center_lon],
+        zoom_start=_zoom,
         tiles='CartoDB positron',
         attr='CartoDB'
     )
@@ -213,6 +232,10 @@ def build_map():
                     "note": f"Real GEE-scored site. GPS: {gps:.1f}"
                 })
             print(f"  Using {len(sites)} real sites from GEE.")
+
+    if MIN_GPS > 0:
+        sites = [s for s in sites if s.get('gps', 0) >= MIN_GPS]
+        print(f"  Filtered to {len(sites)} sites with GPS >= {MIN_GPS}")
 
     sites_layer = folium.FeatureGroup(name='Geothermal Sweet Spots (Top 10)')
     for i, site in enumerate(sites, 1):

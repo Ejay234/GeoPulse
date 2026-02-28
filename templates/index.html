@@ -163,6 +163,117 @@
         body.accessible .sidebar    { width: 340px; }
         body.accessible .chat-msg   { font-size: 14px; line-height: 1.8; }
         body.accessible * { letter-spacing: 0.3px; }
+
+        /* Tab row (Sites / Parameters) */
+        .tabs { display: flex; border-bottom: 1px solid #2a2d3a; flex-shrink: 0; }
+        .tab { flex: 1; padding: 10px 8px; font-size: 11px; text-align: center; cursor: pointer; color: #666; border-bottom: 2px solid transparent; transition: all 0.2s; }
+        .tab.active { color: #d73027; border-bottom-color: #d73027; }
+        .tab-pane { display: none; overflow-y: auto; flex-direction: column; }
+        .tab-pane.active { display: flex; }
+
+        /* Site item hover tooltip */
+        .site-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid #2a2d3a; position: relative; cursor: pointer; transition: background 0.15s; }
+        .site-item:hover { background: #1e2130; padding-left: 6px; padding-right: 6px; margin: 0 -6px; }
+        .site-item:last-child { border-bottom: none; }
+        .site-tooltip { display: none; position: absolute; left: 105%; top: 0; width: 200px; background: #12151f; border: 1px solid #d73027; border-radius: 8px; padding: 12px; z-index: 200; box-shadow: 0 8px 24px rgba(0,0,0,0.7); font-size: 11px; pointer-events: none; }
+        .site-item:hover .site-tooltip { display: block; }
+        .tt-title { font-size: 12px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+        .tt-row { display: flex; justify-content: space-between; margin-bottom: 5px; color: #888; }
+        .tt-row span:last-child { color: #e0e0e0; font-weight: 600; }
+        .tt-bar-outer { height: 4px; background: #2a2d3a; border-radius: 2px; margin-top: 8px; }
+        .tt-bar-inner { height: 100%; border-radius: 2px; }
+        .tt-tier { font-size: 10px; margin-top: 8px; padding: 3px 7px; border-radius: 3px; display: inline-block; font-weight: 700; }
+
+        /* Parameter form styles */
+        .param-group { margin-bottom: 14px; }
+        .param-label { display: flex; justify-content: space-between; font-size: 11px; color: #aaa; margin-bottom: 5px; }
+        .param-label span { color: #d73027; font-weight: 700; }
+        input[type=range] { width: 100%; accent-color: #d73027; cursor: pointer; height: 4px; }
+        input[type=date], input[type=number], select { width: 100%; background: #0f1117; border: 1px solid #2a2d3a; color: #e0e0e0; padding: 7px 10px; border-radius: 5px; font-size: 12px; }
+        input:focus, select:focus { outline: none; border-color: #d73027; }
+        .range-hints { display: flex; justify-content: space-between; font-size: 9px; color: #555; margin-top: 3px; }
+
+        /* SVI notice */
+        .svi-notice { padding: 10px 12px; border-radius: 6px; font-size: 11px; line-height: 1.6; border: 1px solid #b8860b; background: rgba(184,134,11,0.08); color: #d4a017; margin-bottom: 14px; }
+        .svi-notice.ok { border-color: #2e7d32; background: rgba(46,125,50,0.08); color: #66bb6a; }
+        .svi-notice a { color: #ffd700; }
+
+        /* Section divider inside params tab */
+        .param-section-title { font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px; color: #555; border-top: 1px solid #2a2d3a; padding-top: 14px; margin-top: 4px; margin-bottom: 12px; }
+
+        /* Collapsible advanced section */
+        .advanced-toggle { display: flex; align-items: center; justify-content: space-between; cursor: pointer; padding: 10px 0; font-size: 11px; color: #888; border-top: 1px solid #2a2d3a; margin-top: 8px; user-select: none; }
+        .advanced-toggle:hover { color: #d73027; }
+        .advanced-toggle .arrow { transition: transform 0.25s; font-size: 10px; }
+        .advanced-toggle.open .arrow { transform: rotate(180deg); }
+        .advanced-body { display: none; padding-top: 10px; }
+        .advanced-body.open { display: block; }
+
+        /* Custom bbox inputs shown only when region=custom */
+        .custom-bbox { display: none; background: #0a0d14; border: 1px solid #2a2d3a; border-radius: 6px; padding: 10px; margin-top: 8px; }
+        .custom-bbox.show { display: block; }
+        .bbox-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .bbox-grid label { font-size: 10px; color: #888; display: block; margin-bottom: 3px; }
+
+        /* Reset button */
+        .reset-btn { background: none; border: 1px solid #2a2d3a; color: #888; padding: 7px 10px; border-radius: 5px; font-size: 11px; cursor: pointer; width: 100%; margin-bottom: 10px; transition: all 0.2s; }
+        .reset-btn:hover { border-color: #d73027; color: #d73027; }
+
+        /* Tab row  */
+        .tabs { display: flex; border-bottom: 1px solid #2a2d3a; flex-shrink: 0; }
+        .tab { flex: 1; padding: 10px 6px; font-size: 11px; text-align: center; cursor: pointer; color: #666; border-bottom: 2px solid transparent; transition: all 0.2s; font-family: 'Space Mono', monospace; }
+        .tab.active { color: #d73027; border-bottom-color: #d73027; }
+        .tab-pane { display: none; overflow-y: auto; flex-direction: column; flex: 1; }
+        .tab-pane.active { display: flex; }
+
+        /*  Hover tooltip for site items */
+        .site-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid #2a2d3a; position: relative; cursor: pointer; transition: background 0.15s; border-radius: 4px; }
+        .site-item:hover { background: #1a1d2a; padding-left: 6px; padding-right: 6px; margin: 0 -6px; }
+        .site-item:last-child { border-bottom: none; }
+        .site-tooltip { display: none; position: absolute; left: 105%; top: 0; width: 210px; background: #12151f; border: 1px solid #d73027; border-radius: 8px; padding: 13px; z-index: 500; box-shadow: 0 8px 32px rgba(0,0,0,0.8); font-size: 11px; pointer-events: none; }
+        .site-item:hover .site-tooltip { display: block; }
+        .tt-title { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 9px; }
+        .tt-row { display: flex; justify-content: space-between; margin-bottom: 5px; color: #888; }
+        .tt-row span:last-child { color: #e0e0e0; font-weight: 600; }
+        .tt-bar-outer { height: 4px; background: #2a2d3a; border-radius: 2px; margin-top: 9px; }
+        .tt-bar-inner { height: 100%; border-radius: 2px; }
+        .tt-tier { font-size: 10px; margin-top: 8px; padding: 3px 7px; border-radius: 3px; display: inline-block; font-weight: 700; }
+
+        /* Parameter form inputs */
+        .param-group { margin-bottom: 13px; }
+        .param-label { display: flex; justify-content: space-between; font-size: 11px; color: #aaa; margin-bottom: 5px; }
+        .param-label span { color: #d73027; font-weight: 700; }
+        input[type=range] { width: 100%; accent-color: #d73027; cursor: pointer; }
+        input[type=date], input[type=number], select { width: 100%; background: #0f1117; border: 1px solid #2a2d3a; color: #e0e0e0; padding: 7px 10px; border-radius: 5px; font-size: 12px; }
+        input:focus, select:focus { outline: none; border-color: #d73027; }
+        .range-hints { display: flex; justify-content: space-between; font-size: 9px; color: #555; margin-top: 3px; }
+        .param-section-title { font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px; color: #555; border-top: 1px solid #2a2d3a; padding-top: 13px; margin-bottom: 12px; margin-top: 4px; }
+
+        /* SVI notice */
+        .svi-notice { padding: 10px 12px; border-radius: 6px; font-size: 11px; line-height: 1.6; border: 1px solid #b8860b; background: rgba(184,134,11,0.08); color: #d4a017; margin-bottom: 14px; }
+        .svi-notice.ok { border-color: #2e7d32; background: rgba(46,125,50,0.08); color: #66bb6a; }
+        .svi-notice a { color: #ffd700; }
+
+        /* Collapsible advanced section */
+        .advanced-toggle { display: flex; align-items: center; justify-content: space-between; cursor: pointer; padding: 10px 0 8px 0; font-size: 11px; color: #777; border-top: 1px solid #2a2d3a; margin-top: 6px; user-select: none; }
+        .advanced-toggle:hover { color: #d73027; }
+        .adv-arrow { transition: transform 0.25s; font-size: 9px; }
+        .advanced-toggle.open .adv-arrow { transform: rotate(180deg); }
+        .advanced-body { display: none; }
+        .advanced-body.open { display: block; }
+
+        /* Custom bounding box */
+        .custom-bbox { display: none; background: #0a0d14; border: 1px solid #2a2d3a; border-radius: 6px; padding: 10px; margin-top: 8px; }
+        .custom-bbox.show { display: block; }
+        .bbox-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .bbox-label { font-size: 10px; color: #888; display: block; margin-bottom: 3px; }
+
+        /* Download button */
+        .download-btn { display: block; text-align: center; background: #1a1d2a; border: 1px solid #2a2d3a; color: #888; padding: 8px; border-radius: 5px; font-size: 11px; text-decoration: none; margin-top: 8px; transition: all 0.2s; }
+        .download-btn:hover { border-color: #4fc3f7; color: #4fc3f7; }
+
+        .site-item:hover .site-tt { display:block !important; }
+        .site-item:hover { background:#1a1d2a; }
     </style>
 </head>
 <body>
@@ -172,7 +283,7 @@
     <div class="logo">
     <!-- Minimal Eco Logo (GeoPulse) — generated by ChatGPT (OpenAI) -->
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 220" role="img" aria-label="GeoPulse logo"
-        style="height:100px; width:auto; display:block;">
+        style="height:50px; width:auto; display:block;">
         <defs>
         <linearGradient id="ecoGrad" x1="0" y1="0" x2="1" y2="1">
             <stop offset="0%" stop-color="#1B9E77"/>
@@ -242,72 +353,266 @@
 
     <div class="sidebar">
 
-        <!-- Top Site -->
-        {% if top_site %}
-        <div class="sidebar-section">
-            <h3>Top Candidate Site</h3>
-            <div class="top-site-card">
-                <div class="score">{{ top_site.gps }}</div>
-                <div class="score-label">GPS SCORE / 100</div>
-                <div class="name">{{ top_site.name }}</div>
-                <div class="coords">{{ top_site.lat }}, {{ top_site.lon }}</div>
-            </div>
-        </div>
-        {% endif %}
-
-        <!-- Site List -->
-        <div class="sidebar-section">
-            <h3>Candidate Sites ({{ sites|length }})</h3>
-            {% for site in sites %}
-                {% set gps = site.gps %}
-                {% if gps >= 85 %}{% set cc='c-red' %}{% set bc='bg-red' %}
-                {% elif gps >= 70 %}{% set cc='c-orange' %}{% set bc='bg-orange' %}
-                {% elif gps >= 60 %}{% set cc='c-yellow' %}{% set bc='bg-yellow' %}
-                {% else %}{% set cc='c-green' %}{% set bc='bg-green' %}{% endif %}
-            <div class="site-item">
-                <div class="rank-badge {{ bc }}">{{ site.rank }}</div>
-                <div class="site-info">
-                    <div class="site-name">{{ site.name }}</div>
-                    <div class="site-coords">{{ site.lat }}, {{ site.lon }}</div>
-                </div>
-                <div class="site-gps {{ cc }}">{{ site.gps }}</div>
-            </div>
-            {% else %}
-            <p style="font-size:12px; color:#666;">No sites yet. Run the pipeline.</p>
-            {% endfor %}
+        <!-- Tab row -->
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('sites', this)">Sites ({{ sites|length }})</div>
+            <div class="tab" onclick="switchTab('params', this)">Parameters</div>
         </div>
 
-        <!-- Formula -->
-        <div class="sidebar-section">
-            <h3>Scoring Formula</h3>
-            <div class="formula-box">
-                <div class="formula">GPS = 0.5×LST + 0.3×Grid + 0.2×SVI</div>
-                <div class="weight-bar">
-                    <div class="w-lst"></div>
-                    <div class="w-grid"></div>
-                    <div class="w-svi"></div>
-                </div>
-                <div style="display:flex; gap:8px; margin-top:6px; font-size:10px;">
-                    <span class="c-red">■ LST 50%</span>
-                    <span class="c-orange">■ Grid 30%</span>
-                    <span class="c-yellow">■ SVI 20%</span>
+        <!-- Sites Tab -->
+        <div class="tab-pane active" id="tab-sites">
+
+            {% if top_site and has_run %}
+            <div class="sidebar-section">
+                <h3>Top Candidate Site</h3>
+                <div class="top-site-card">
+                    <div class="score">{{ top_site.gps }}</div>
+                    <div class="score-label">GPS SCORE / 100</div>
+                    <div class="name">{{ top_site.name }}</div>
+                    <div class="coords">{{ top_site.lat }}, {{ top_site.lon }}</div>
                 </div>
             </div>
-        </div>
+            {% endif %}
 
-        <!-- Run Pipeline -->
-        <div class="sidebar-section">
-            <h3>Pipeline Control</h3>
-            <button class="reset-btn" onclick="resetDefaults()">Reset to Defaults</button>
-            <button class="run-btn" id="runBtn" onclick="triggerRun()">
-                Run Fresh Analysis
-            </button>
-            <div class="run-status" id="runStatus"></div>
-            <p style="font-size:10px; color:#555; margin-top:8px;">
-                Re-fetches latest Landsat data from GEE, rescores all sites,
-                and regenerates the map (~3&ndash;5 min).
-            </p>
-        </div>
+            <!-- Site List -->
+            <div class="sidebar-section">
+                {% if not has_run %}
+                <h3>Candidate Sites</h3>
+                <div style="background:#0f1117; border:1px solid #2a2d3a; border-radius:8px; padding:20px; text-align:center; margin-top:4px;">
+                    <div style="font-size:32px; margin-bottom:10px;">GeoPulse</div>
+                    <div style="font-size:12px; color:#888; line-height:1.8;">
+                        No analysis run yet.<br>
+                        Go to <strong style="color:#e0e0e0;">Parameters</strong> tab<br>
+                        and click <strong style="color:#d73027;">Run with These Settings</strong>.
+                    </div>
+                </div>
+                {% else %}
+                <h3>Candidate Sites ({{ sites|length }})</h3>
+                {% for site in sites %}
+                    {% set gps = site.gps %}
+                    {% if gps >= 85 %}{% set cc='c-red' %}{% set bc='bg-red' %}{% set tcolor='#d73027' %}
+                    {% elif gps >= 70 %}{% set cc='c-orange' %}{% set bc='bg-orange' %}{% set tcolor='#fc8d59' %}
+                    {% elif gps >= 60 %}{% set cc='c-yellow' %}{% set bc='bg-yellow' %}{% set tcolor='#e6b800' %}
+                    {% else %}{% set cc='c-green' %}{% set bc='bg-green' %}{% set tcolor='#91cf60' %}{% endif %}
+                <div class="site-item" style="position:relative; cursor:pointer;">
+                    <div class="rank-badge {{ bc }}">{{ site.rank }}</div>
+                    <div class="site-info" style="flex:1;">
+                        <div class="site-name">{{ site.name }}</div>
+                        <div class="site-coords">{{ site.county }} · {{ site.lat }}, {{ site.lon }}</div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div class="site-gps {{ cc }}">{{ site.gps }}</div>
+                        <div style="font-size:9px; color:#555;">{{ site.tier }}</div>
+                    </div>
+                    <!-- Hover tooltip -->
+                    <div style="display:none; position:absolute; left:105%; top:0; width:215px;
+                                background:#12151f; border:1px solid {{ tcolor }}; border-radius:8px;
+                                padding:13px; z-index:500; box-shadow:0 8px 32px rgba(0,0,0,0.8);
+                                font-size:11px; pointer-events:none;" class="site-tt">
+                        <div style="font-size:13px; font-weight:700; color:#fff; margin-bottom:9px;">
+                            {{ site.name }} — {{ site.county }}
+                        </div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:5px; color:#888;">
+                            <span>GPS Score</span><span class="{{ cc }}" style="font-weight:700;">{{ site.gps }} / 100</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:5px; color:#888;">
+                            <span>Tier</span><span style="color:#e0e0e0;">{{ site.tier }}</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:5px; color:#888;">
+                            <span>Latitude</span><span style="color:#e0e0e0;">{{ site.lat }}</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:5px; color:#888;">
+                            <span>Longitude</span><span style="color:#e0e0e0;">{{ site.lon }}</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px; color:#888;">
+                            <span>Rank</span><span style="color:#e0e0e0;">#{{ site.rank }} of {{ sites|length }}</span>
+                        </div>
+                        <div style="height:4px; background:#2a2d3a; border-radius:2px;">
+                            <div style="width:{{ site.gps }}%; height:100%; background:{{ tcolor }}; border-radius:2px;"></div>
+                        </div>
+                        <div style="font-size:10px; margin-top:8px; padding:3px 7px; border-radius:3px;
+                                    background:{{ tcolor }}22; color:{{ tcolor }}; border:1px solid {{ tcolor }}44;
+                                    display:inline-block; font-weight:700;">{{ site.tier }} Candidate</div>
+                    </div>
+                </div>
+                {% else %}
+                <p style="font-size:12px; color:#666; margin-top:8px;">No sites found — lower the percentile cutoff.</p>
+                {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="sidebar-section">
+                <h3>Scoring Formula</h3>
+                <div class="formula-box">
+                    <div class="formula">GPS = 0.5×LST + 0.3×Grid + 0.2×SVI</div>
+                    <div class="weight-bar"><div class="w-lst"></div><div class="w-grid"></div><div class="w-svi"></div></div>
+                    <div style="display:flex; gap:8px; margin-top:6px; font-size:10px;">
+                        <span class="c-red">■ LST 50%</span>
+                        <span class="c-orange">■ Grid 30%</span>
+                        <span class="c-yellow">■ SVI 20%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>Pipeline Control</h3>
+                <button class="run-btn" id="runBtn" onclick="triggerRun()">Run Analysis</button>
+                <div class="run-status" id="runStatus"></div>
+                <!-- Download button -->
+                <a href="/download" class="download-btn">⬇ Download Outputs (.zip)</a>
+                <p style="font-size:10px; color:#555; margin-top:8px;">
+                    Re-fetches Landsat data from GEE, rescores all sites, regenerates map (~3–5 min).
+                </p>
+            </div>
+
+        </div><!-- /tab-sites -->
+
+        <!-- Parameters tab  -->
+        <div class="tab-pane" id="tab-params">
+            <div class="sidebar-section">
+
+                {% if svi_available %}
+                <div class="svi-notice ok">SVI equity data loaded and active.</div>
+                {% else %}
+                <div class="svi-notice">SVI missing — using neutral score (50).<br>
+                    <a href="https://www.atsdr.cdc.gov/placeandhealth/svi/data_documentation_download.html" target="_blank">
+                        Download CDC SVI Utah 2022
+                    </a> → unzip into <code>data/svi_utah/</code>
+                </div>
+                {% endif %}
+
+                <!-- Score Settings -->
+                <div class="param-section-title" style="border-top:none; padding-top:0;">Score Settings</div>
+
+                <div class="param-group">
+                    <div class="param-label">Study Region</div>
+                    <select id="region" onchange="toggleCustomBbox()">
+                        <option value="southern_utah" {% if (params.region or 'southern_utah')=='southern_utah' %}selected{% endif %}>Southern Utah (incl. FORGE)</option>
+                        <option value="central_utah"  {% if (params.region or '')=='central_utah'  %}selected{% endif %}>Central Utah (Millard / Sevier)</option>
+                        <option value="northern_utah" {% if (params.region or '')=='northern_utah' %}selected{% endif %}>Northern Utah (SLC / Tooele)</option>
+                        <option value="all_utah"      {% if (params.region or '')=='all_utah'      %}selected{% endif %}>All of Utah</option>
+                        <option value="great_basin"   {% if (params.region or '')=='great_basin'   %}selected{% endif %}>Great Basin (NV/UT border)</option>
+                        <option value="custom"        {% if (params.region or '')=='custom'        %}selected{% endif %}>Custom Bounding Box</option>
+                    </select>
+                    <div class="custom-bbox" id="customBbox">
+                        <div class="bbox-grid">
+                            <div><span class="bbox-label">Min Lat</span><input type="number" id="custom_lat_min" step="0.1" value="{{ params.custom_lat_min or 37.0 }}"></div>
+                            <div><span class="bbox-label">Max Lat</span><input type="number" id="custom_lat_max" step="0.1" value="{{ params.custom_lat_max or 42.0 }}"></div>
+                            <div><span class="bbox-label">Min Lon</span><input type="number" id="custom_lon_min" step="0.1" value="{{ params.custom_lon_min or -114.0 }}"></div>
+                            <div><span class="bbox-label">Max Lon</span><input type="number" id="custom_lon_max" step="0.1" value="{{ params.custom_lon_max or -109.0 }}"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="param-group">
+                    <div class="param-label">Start Date</div>
+                    <input type="date" id="start_date" value="{{ params.start_date or '2023-05-01' }}">
+                </div>
+                <div class="param-group">
+                    <div class="param-label">End Date</div>
+                    <input type="date" id="end_date" value="{{ params.end_date or '2024-09-30' }}">
+                </div>
+                <div class="param-group">
+                    <div class="param-label">Max Cloud Cover <span id="cloud_val">{{ params.cloud_cover or 20 }}%</span></div>
+                    <input type="range" id="cloud_cover" min="5" max="50" step="5"
+                        value="{{ params.cloud_cover or 20 }}"
+                        oninput="document.getElementById('cloud_val').textContent=this.value+'%'">
+                    <div class="range-hints"><span>5% strict</span><span>50% lenient</span></div>
+                </div>
+
+                <div class="param-group">
+                    <div class="param-label">LST Weight <span id="lst_val">{{ "%.0f"|format((params.weight_lst or 0.5)*100) }}%</span></div>
+                    <input type="range" id="weight_lst" min="0.1" max="0.8" step="0.05"
+                        value="{{ params.weight_lst or 0.5 }}" oninput="updateWeights()">
+                </div>
+                <div class="param-group">
+                    <div class="param-label">Grid Proximity Weight <span id="grid_val">{{ "%.0f"|format((params.weight_grid or 0.3)*100) }}%</span></div>
+                    <input type="range" id="weight_grid" min="0.05" max="0.6" step="0.05"
+                        value="{{ params.weight_grid or 0.3 }}" oninput="updateWeights()">
+                </div>
+                <div class="param-group">
+                    <div class="param-label">SVI Equity Weight <span id="svi_val">{{ "%.0f"|format((params.weight_svi or 0.2)*100) }}%</span></div>
+                    <input type="range" id="weight_svi" min="0.0" max="0.5" step="0.05"
+                        value="{{ params.weight_svi or 0.2 }}" oninput="updateWeights()">
+                </div>
+                <div class="weight-bar" style="margin-bottom:4px;">
+                    <div class="w-lst"  id="bar_lst"  style="flex:{{ params.weight_lst or 0.5 }};transition:flex 0.3s;"></div>
+                    <div class="w-grid" id="bar_grid" style="flex:{{ params.weight_grid or 0.3 }};transition:flex 0.3s;"></div>
+                    <div class="w-svi"  id="bar_svi"  style="flex:{{ params.weight_svi or 0.2 }};transition:flex 0.3s;"></div>
+                </div>
+                <div style="display:flex; gap:10px; font-size:10px; margin-bottom:14px;">
+                    <span class="c-red">LST</span><span class="c-orange">Grid</span><span class="c-yellow">SVI</span>
+                </div>
+
+                <div class="param-group">
+                    <div class="param-label">Number of Sites</div>
+                    <input type="number" id="num_sites" min="3" max="50" value="{{ params.num_sites or 10 }}">
+                </div>
+                <div class="param-group">
+                    <div class="param-label">Score Percentile Cutoff <span id="pct_val">{{ params.percentile or 70 }}th</span></div>
+                    <input type="range" id="percentile" min="50" max="95" step="5"
+                        value="{{ params.percentile or 70 }}"
+                        oninput="document.getElementById('pct_val').textContent=this.value+'th'">
+                    <div class="range-hints"><span>50th (many)</span><span>95th (best only)</span></div>
+                </div>
+
+                <!-- Run button -->
+                <button class="run-btn" onclick="triggerRun()" style="margin-bottom:6px;">Run with These Settings</button>
+                <div class="run-status" id="runStatus2"></div>
+
+                <!-- Advanced Setting -->
+                <div class="advanced-toggle" id="advToggle" onclick="toggleAdvanced()">
+                    <span>Advanced Display Settings</span>
+                    <span class="adv-arrow">▼</span>
+                </div>
+                <div class="advanced-body" id="advBody">
+
+                    <div class="param-section-title" style="border-top:none; padding-top:0; margin-top:0;">Heatmap</div>
+                    <div class="param-group">
+                        <div class="param-label">Radius (px) <span id="hm_radius_val">25</span></div>
+                        <input type="range" id="hm_radius" min="10" max="60" step="5" value="25"
+                            oninput="document.getElementById('hm_radius_val').textContent=this.value">
+                        <div class="range-hints"><span>10 tight</span><span>60 diffuse</span></div>
+                    </div>
+                    <div class="param-group">
+                        <div class="param-label">Blur (px) <span id="hm_blur_val">15</span></div>
+                        <input type="range" id="hm_blur" min="5" max="40" step="5" value="15"
+                            oninput="document.getElementById('hm_blur_val').textContent=this.value">
+                        <div class="range-hints"><span>5 sharp</span><span>40 smooth</span></div>
+                    </div>
+                    <div class="param-group">
+                        <div class="param-label">Min Opacity <span id="hm_opacity_val">0.3</span></div>
+                        <input type="range" id="hm_opacity" min="0.1" max="0.9" step="0.1" value="0.3"
+                            oninput="document.getElementById('hm_opacity_val').textContent=parseFloat(this.value).toFixed(1)">
+                        <div class="range-hints"><span>0.1 faint</span><span>0.9 vivid</span></div>
+                    </div>
+                    <div class="param-group">
+                        <div class="param-label">Min GPS Score to Show <span id="min_gps_val">0</span></div>
+                        <input type="range" id="min_gps" min="0" max="80" step="5" value="0"
+                            oninput="document.getElementById('min_gps_val').textContent=this.value">
+                        <div class="range-hints"><span>0 all sites</span><span>80 top only</span></div>
+                    </div>
+
+                    <div class="param-section-title" style="border-top:none; padding-top:0; margin-top:0;">LST Temperature Filter</div>
+                    <div class="param-group">
+                        <div class="param-label">Min Temp (°C) <span id="min_lst_val">20</span></div>
+                        <input type="range" id="min_lst" min="-10" max="50" step="5" value="20"
+                            oninput="document.getElementById('min_lst_val').textContent=this.value">
+                        <div class="range-hints"><span>-10°C</span><span>50°C</span></div>
+                    </div>
+                    <div class="param-group">
+                        <div class="param-label">Max Temp (°C) <span id="max_lst_val">60</span></div>
+                        <input type="range" id="max_lst" min="20" max="90" step="5" value="60"
+                            oninput="document.getElementById('max_lst_val').textContent=this.value">
+                        <div class="range-hints"><span>20°C</span><span>90°C</span></div>
+                    </div>
+
+                </div><!-- /advanced-body -->
+
+                <button class="reset-btn" onclick="resetDefaults()" style="margin-top:14px;">Reset to Defaults</button>
+
+            </div>
+        </div><!-- /tab-params -->
 
     </div><!-- /sidebar -->
 
@@ -357,8 +662,7 @@
     // Restore preference on load
     if (localStorage.getItem('accessible') === 'true') toggleAccessible();
 
-    // Polls /api/status every 3 seconds, updates progress bar + step text,
-    // and reloads the page when pipeline completes.
+    // Polls /api/status every 3 seconds, update
     {% if status == 'running' %}
     function pollStatus() {
         fetch('/api/status')
@@ -380,19 +684,84 @@
                 }
 
                 if (data.status === 'done' || data.status === 'error') {
-                    // Pipeline finished — reload to show dashboard or error screen
+                    // Pipeline finished
                     location.reload();
                 } else {
-                    // Still running — poll again in 3 seconds
                     setTimeout(pollStatus, 3000);
                 }
             })
-            .catch(() => setTimeout(pollStatus, 5000)); // retry on network error
+            .catch(() => setTimeout(pollStatus, 5000)); 
     }
 
     // Start polling immediately
     pollStatus();
     {% endif %}
+
+    // Tab switching
+    function switchTab(name, el) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-pane').forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
+        document.getElementById('tab-' + name).classList.add('active');
+    }
+
+    // Live weight bar update
+    function updateWeights() {
+        const lst  = parseFloat(document.getElementById('weight_lst').value);
+        const grid = parseFloat(document.getElementById('weight_grid').value);
+        const svi  = parseFloat(document.getElementById('weight_svi').value);
+        document.getElementById('lst_val').textContent  = Math.round(lst*100)  + '%';
+        document.getElementById('grid_val').textContent = Math.round(grid*100) + '%';
+        document.getElementById('svi_val').textContent  = Math.round(svi*100)  + '%';
+        document.getElementById('bar_lst').style.flex   = lst;
+        document.getElementById('bar_grid').style.flex  = grid;
+        document.getElementById('bar_svi').style.flex   = svi;
+    }
+
+    // Show/hide custom bounding box when region=custom
+    function toggleCustomBbox() {
+        const region = document.getElementById('region').value;
+        document.getElementById('customBbox').classList.toggle('show', region === 'custom');
+    }
+
+    // Expand/collapse advanced settings panel
+    function toggleAdvanced() {
+        document.getElementById('advToggle').classList.toggle('open');
+        document.getElementById('advBody').classList.toggle('open');
+    }
+
+    // Tab switching
+    function switchTab(name, el) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-pane').forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
+        document.getElementById('tab-' + name).classList.add('active');
+    }
+
+    // Weight sliders/bars update
+    function updateWeights() {
+        const lst  = parseFloat(document.getElementById('weight_lst').value);
+        const grid = parseFloat(document.getElementById('weight_grid').value);
+        const svi  = parseFloat(document.getElementById('weight_svi').value);
+        document.getElementById('lst_val').textContent  = Math.round(lst*100)  + '%';
+        document.getElementById('grid_val').textContent = Math.round(grid*100) + '%';
+        document.getElementById('svi_val').textContent  = Math.round(svi*100)  + '%';
+        document.getElementById('bar_lst').style.flex   = lst;
+        document.getElementById('bar_grid').style.flex  = grid;
+        document.getElementById('bar_svi').style.flex   = svi;
+    }
+
+    // Show/hide custom bbox
+    function toggleCustomBbox() {
+        const region = document.getElementById('region').value;
+        document.getElementById('customBbox').classList.toggle('show', region === 'custom');
+    }
+
+    // Expand/collapse advanced settings panel
+    function toggleAdvanced() {
+        document.getElementById('advToggle').classList.toggle('open');
+        document.getElementById('advBody').classList.toggle('open');
+    }
 
     // Reset parameters to defaults
     function resetDefaults() {
@@ -406,6 +775,22 @@
         document.getElementById('percentile').value  = 70;
         document.getElementById('cloud_val').textContent = '20%';
         document.getElementById('pct_val').textContent   = '70th';
+        // Reset region 
+        document.getElementById('region').value = 'southern_utah';
+        document.getElementById('customBbox').classList.remove('show');
+        // Reset advanced settings 
+        document.getElementById('hm_radius').value  = 25;
+        document.getElementById('hm_blur').value    = 15;
+        document.getElementById('hm_opacity').value = 0.3;
+        document.getElementById('min_gps').value    = 0;
+        document.getElementById('min_lst').value    = 20;
+        document.getElementById('max_lst').value    = 60;
+        document.getElementById('hm_radius_val').textContent  = '25';
+        document.getElementById('hm_blur_val').textContent    = '15';
+        document.getElementById('hm_opacity_val').textContent = '0.3';
+        document.getElementById('min_gps_val').textContent    = '0';
+        document.getElementById('min_lst_val').textContent    = '20';
+        document.getElementById('max_lst_val').textContent    = '60';
         updateWeights();
     }
 
@@ -451,24 +836,45 @@
         });
     }
 
-    // Trigger fresh pipeline run
     function triggerRun() {
-        const btn = document.getElementById('runBtn');
-        const statusEl = document.getElementById('runStatus');
+        const btn      = document.getElementById('runBtn');
+        const statusEl = document.getElementById('runStatus') || document.getElementById('runStatus2');
 
         if (btn) { btn.disabled = true; btn.textContent = 'Starting...'; }
-        if (statusEl) statusEl.textContent = 'Sending request...';
+        if (statusEl) statusEl.textContent = 'Sending parameters...';
 
-        fetch('/run', { method: 'POST' })
+        const g = (id, fb) => { const el = document.getElementById(id); return el ? el.value : fb; };
+        const params = {
+            start_date:  g('start_date',  '2023-05-01'),
+            end_date:    g('end_date',    '2024-09-30'),
+            cloud_cover: parseInt(g('cloud_cover', 20)),
+            weight_lst:  parseFloat(g('weight_lst',  0.5)),
+            weight_grid: parseFloat(g('weight_grid', 0.3)),
+            weight_svi:  parseFloat(g('weight_svi',  0.2)),
+            num_sites:   parseInt(g('num_sites',   10)),
+            percentile:  parseInt(g('percentile',  70)),
+            region:          g('region', 'southern_utah'),
+            custom_lat_min:  parseFloat(g('custom_lat_min', 37.0)),
+            custom_lat_max:  parseFloat(g('custom_lat_max', 42.0)),
+            custom_lon_min:  parseFloat(g('custom_lon_min', -114.0)),
+            custom_lon_max:  parseFloat(g('custom_lon_max', -109.0)),
+            hm_radius:   parseInt(g('hm_radius',  25)),
+            hm_blur:     parseInt(g('hm_blur',    15)),
+            hm_opacity:  parseFloat(g('hm_opacity', 0.3)),
+            min_gps:     parseInt(g('min_gps',    0)),
+            min_lst:     parseInt(g('min_lst',    20)),
+            max_lst:     parseInt(g('max_lst',    60)),
+        };
+
+        fetch('/run', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(params) })
             .then(r => r.json())
-            .then(data => {
+            .then(() => {
                 if (statusEl) statusEl.textContent = 'Pipeline started — reloading...';
-                // Reload after short delay so server has time to update state
                 setTimeout(() => location.reload(), 1500);
             })
             .catch(() => {
                 if (statusEl) statusEl.textContent = 'Error starting pipeline.';
-                if (btn) { btn.disabled = false; btn.textContent = 'Run Fresh Analysis'; }
+                if (btn) { btn.disabled = false; btn.textContent = 'Run Analysis'; }
             });
     }
 </script>

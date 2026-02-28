@@ -18,7 +18,24 @@ import geopandas as gpd
 
 ee.Initialize(project="gen-lang-client-0356293060")
 
-STUDY_REGION = ee.Geometry.Rectangle([-113.5, 37.0, -111.5, 39.0])
+REGION_KEY = os.environ.get("GEOPULSE_REGION", "southern_utah")
+
+REGION_BOXES = {
+    "southern_utah":  [-114.0, 37.0, -111.5, 39.0],   # Beaver + Iron + Washington
+    "central_utah":   [-114.0, 38.5, -111.0, 40.5],   # Millard + Sevier + Juab
+    "northern_utah":  [-113.0, 39.5, -111.0, 42.0],   # Salt Lake + Tooele + Davis
+    "all_utah":       [-114.1, 36.9, -109.0, 42.1],   # Full state
+    "great_basin":    [-117.0, 36.0, -113.0, 40.0],   # NV/UT border region
+    "custom": [                                         # User-defined bbox from UI
+        float(os.environ.get("GEOPULSE_CUSTOM_LON_MIN", "-114.0")),
+        float(os.environ.get("GEOPULSE_CUSTOM_LAT_MIN",  "37.0")),
+        float(os.environ.get("GEOPULSE_CUSTOM_LON_MAX", "-109.0")),
+        float(os.environ.get("GEOPULSE_CUSTOM_LAT_MAX",  "42.0")),
+    ],
+}
+_bbox = REGION_BOXES.get(REGION_KEY, REGION_BOXES["southern_utah"])
+print(f"[scoring] Region: {REGION_KEY}  bbox: {_bbox}")
+STUDY_REGION = ee.Geometry.Rectangle(_bbox)
 SCALE = 1000
 START_DATE   = os.environ.get("GEOPULSE_START_DATE",  "2023-05-01")
 END_DATE     = os.environ.get("GEOPULSE_END_DATE",    "2024-09-30")
@@ -61,8 +78,13 @@ def get_lst_score():
 
     if count == 0:
         raise ValueError(f"No images found. Try widening date range or cloud cover.")
+    
+    lst_raw = landsat.select("LST_Celsius").median().clip(STUDY_REGION)
 
-    lst = landsat.select("LST_Celsius").median().clip(STUDY_REGION)
+    MIN_LST = float(os.environ.get("GEOPULSE_MIN_LST", "20"))
+    MAX_LST = float(os.environ.get("GEOPULSE_MAX_LST", "60"))
+    lst = lst_raw.updateMask(lst_raw.gte(MIN_LST).And(lst_raw.lte(MAX_LST)))
+    print(f"  LST filter: {MIN_LST}°C – {MAX_LST}°C")
 
     stats = lst.reduceRegion(
         reducer=ee.Reducer.minMax(),
@@ -171,9 +193,8 @@ def compute_final_score(lst_score, grid_score, svi_score):
 # Extract Top Sites
 def extract_top_sites(gps_image, n=10):
     """
-    Sample top N scoring locations as candidate sites
+    Sample top N scoring locations directly from the GPS raster.
     """
-
     print(f"Extracting top {n} candidate sites...")
 
     threshold_result = gps_image.reduceRegion(
@@ -185,26 +206,21 @@ def extract_top_sites(gps_image, n=10):
 
     print(f"  Threshold result: {threshold_result}")
     threshold = list(threshold_result.values())[0]
-    print(f"  90th percentile threshold: {threshold:.2f}")
+    print(f"  {PERCENTILE}th percentile GPS threshold: {threshold:.2f}")
 
-    top_mask = gps_image.gt(threshold).selfMask()
+    top_pixels = gps_image.updateMask(gps_image.gt(threshold))
 
-    samples = top_mask.sample(
+    sites = top_pixels.sample(
         region=STUDY_REGION,
         scale=SCALE,
-        numPixels=n * 3,
-        geometries=True
-    )
+        numPixels=n * 5,   # oversample, then limit
+        geometries=True,
+        seed=42
+    ).limit(n)
 
-    scored = gps_image.sampleRegions(
-        collection=samples,
-        scale=SCALE,
-        geometries=True
-    )
-
-    sites = scored.getInfo()
-    print(f"  Found {len(sites['features'])} candidate sites.")
-    return sites
+    result = sites.getInfo()
+    print(f"  Found {len(result['features'])} candidate sites.")
+    return result
 
 
 # Run

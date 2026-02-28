@@ -6,5 +6,22 @@
   "weight_grid": 0.3,
   "weight_svi": 0.2,
   "num_sites": 10,
-  "percentile": 70
+  "percentile": 70,
+  "region": "all_utah",
+  "custom_lat_min": 37.0,
+  "custom_lat_max": 42.0,
+  "custom_lon_min": -114.0,
+  "custom_lon_max": -109.0,
+  "hm_radius": 25,
+  "hm_blur": 15,
+  "hm_opacity": 0.3,
+  "min_gps_score": 0,
+  "county_beaver": true,
+  "county_millard": true,
+  "county_saltlake": true,
+  "lst_min": 20,
+  "lst_max": 60,
+  "min_gps": 0,
+  "min_lst": 20,
+  "max_lst": 60
 }

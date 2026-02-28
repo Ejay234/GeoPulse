@@ -19,11 +19,26 @@ from email.mime import image
 
 import ee
 import json
+import os as _os
 
 # Authenticate and initialize the Earth Engine client
-ee.Initialize(project="gen-lang-client-0356293060")
-
-STUDY_REGION = ee.Geometry.Rectangle([-113.5, 37.0, -111.5, 39.0])  # Approximate bounding box for Utah
+_REGION_KEY = _os.environ.get("GEOPULSE_REGION", "southern_utah")
+_REGION_BOXES = {
+    "southern_utah":  [-114.0, 37.0, -111.5, 39.0],
+    "central_utah":   [-114.0, 38.5, -111.0, 40.5],
+    "northern_utah":  [-113.0, 39.5, -111.0, 42.0],
+    "all_utah":       [-114.1, 36.9, -109.0, 42.1],
+    "great_basin":    [-117.0, 36.0, -113.0, 40.0],
+    "custom": [
+        float(_os.environ.get("GEOPULSE_CUSTOM_LON_MIN", "-114.0")),
+        float(_os.environ.get("GEOPULSE_CUSTOM_LAT_MIN",  "37.0")),
+        float(_os.environ.get("GEOPULSE_CUSTOM_LON_MAX", "-109.0")),
+        float(_os.environ.get("GEOPULSE_CUSTOM_LAT_MAX",  "42.0")),
+    ],
+}
+_bbox = _REGION_BOXES.get(_REGION_KEY, _REGION_BOXES["southern_utah"])
+STUDY_REGION = ee.Geometry.Rectangle(_bbox)
+print(f"[lst_analysis] Region: {_REGION_KEY}  bbox: {_bbox}")
 
 COUNTIES = {
     "Beaver County": ee.Geometry.Point(-112.641, 38.276),
