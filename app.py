@@ -22,7 +22,7 @@ import threading
 import subprocess
 import sys
 from datetime import datetime
-from flask import Flask, render_template, jsonify, send_from_directory
+from flask import Flask, render_template, jsonify, send_from_directory, request
 
 # App setup
 app = Flask(__name__)
@@ -30,6 +30,18 @@ app = Flask(__name__)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 OUTPUT_DIR = os.path.join(BASE_DIR, 'outputs')
 SCRIPTS_DIR = os.path.join(BASE_DIR, 'scripts')
+
+# Default params
+DEFAULT_PARAMS = {
+    "start_date":  "2023-05-01",
+    "end_date":    "2024-09-30",
+    "cloud_cover": 20,
+    "weight_lst":  0.5,
+    "weight_grid": 0.3,
+    "weight_svi":  0.2,
+    "num_sites":   10,
+    "percentile":  70,
+}
 
 # Pipeline state
 pipeline = {
@@ -41,7 +53,7 @@ pipeline = {
 }
 
 # Pipline Runner
-def run_pipeline_background(force=False):
+def run_pipeline_background(params=None, force=False):
     """
     Run the full GeoPulse pipeline in the background
 
@@ -69,10 +81,23 @@ def run_pipeline_background(force=False):
         return
     
     # Start Pipeline
+    p = params or pipeline["params"]
+    pipeline["params"]   = p
     pipeline["status"]   = "running"
     pipeline["error"]    = None
     pipeline["progress"] = 0
     os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+    # Inject parameters
+    env = os.environ.copy()
+    env["GEOPULSE_START_DATE"]  = str(p["start_date"])
+    env["GEOPULSE_END_DATE"]    = str(p["end_date"])
+    env["GEOPULSE_CLOUD_COVER"] = str(p["cloud_cover"])
+    env["GEOPULSE_WEIGHT_LST"]  = str(p["weight_lst"])
+    env["GEOPULSE_WEIGHT_GRID"] = str(p["weight_grid"])
+    env["GEOPULSE_WEIGHT_SVI"]  = str(p["weight_svi"])
+    env["GEOPULSE_NUM_SITES"]   = str(p["num_sites"])
+    env["GEOPULSE_PERCENTILE"]  = str(p["percentile"])
 
     # Python interpreter as the current venv
     python = sys.executable
@@ -81,7 +106,7 @@ def run_pipeline_background(force=False):
         {
             "name":    "Fetching satellite data & scoring sites",
             "script":  os.path.join(SCRIPTS_DIR, 'scoring.py'),
-            "progress": 60,
+            "progress": 65,
         },
         {
             "name":    "Generating interactive map",
@@ -91,35 +116,29 @@ def run_pipeline_background(force=False):
     ]
 
     for step in steps:
-        pipeline["step"]     = step["name"]
-        print(f"[GeoPulse] Running: {step['name']}...")
-
+        pipeline["step"] = step["name"]
+        print(f"[GeoPulse] {step['name']}...")
         try:
-            result = subprocess.run(
-                [python, step["script"]],
-                capture_output=True,
-                text=True
-            )
-
+            result = subprocess.run([python, step["script"]],
+                                    capture_output=True, text=True, env=env)
+            print(result.stdout)
             if result.returncode != 0:
-                # Fail, error and stops
                 raise RuntimeError(result.stderr or result.stdout)
-
             pipeline["progress"] = step["progress"]
-            print(f"[GeoPulse] Done: {step['name']}")
-
         except Exception as e:
             pipeline["status"] = "error"
-            pipeline["step"]   = f"Failed at: {step['name']}"
+            pipeline["step"]   = f"Failed: {step['name']}"
             pipeline["error"]  = str(e)
             print(f"[GeoPulse] ERROR: {e}")
             return
 
-    # Compeletion
     pipeline["status"]   = "done"
     pipeline["step"]     = "Pipeline complete"
     pipeline["last_run"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    print(f"[GeoPulse] Pipeline complete at {pipeline['last_run']}")
+    # Save params used for this run
+    with open(os.path.join(OUTPUT_DIR, 'last_run_params.json'), 'w') as f:
+        json.dump(p, f, indent=2)
+    print(f"[GeoPulse] Complete at {pipeline['last_run']}")
 
 # Routes
 
@@ -130,9 +149,10 @@ def index():
     Renders the HTML template with map iframe + site stats sidebar.
     """
     # Load scored sites for the sidebar stats
-    sites = load_sites()
+    sites    = load_sites()
     top_site = sites[0] if sites else None
-
+    last_params = load_last_params()
+    svi_available = check_svi_available()
     return render_template(
         'index.html',
         sites=sites,
@@ -142,6 +162,9 @@ def index():
         progress=pipeline["progress"],
         last_run=pipeline["last_run"],
         error=pipeline["error"],
+        params=last_params,
+        defaults=DEFAULT_PARAMS,
+        svi_available=svi_available,
     )
 
 
@@ -205,7 +228,7 @@ def api_status():
 
 
 
-@app.route('/run')
+@app.route('/run', methods=['GET', 'POST'])
 def run_pipeline():
     """
     Trigger a fresh scoring + visualization pipeline run.
@@ -214,16 +237,27 @@ def run_pipeline():
     if pipeline["status"] == "running":
         return jsonify({"status": "already_running", "message": "Pipeline is already running."})
 
-    # Start pipeline in background thread so request returns immediately
-    t = threading.Thread(target=run_pipeline_background, kwargs={"force": True}, daemon=True)
-    t.start()
+    params = DEFAULT_PARAMS.copy()
+    if request.method == 'POST':
+        data = request.get_json(silent=True) or {}
+        try:
+            if "start_date"  in data: params["start_date"]  = data["start_date"]
+            if "end_date"    in data: params["end_date"]     = data["end_date"]
+            if "cloud_cover" in data: params["cloud_cover"]  = int(data["cloud_cover"])
+            if "weight_lst"  in data: params["weight_lst"]   = float(data["weight_lst"])
+            if "weight_grid" in data: params["weight_grid"]  = float(data["weight_grid"])
+            if "weight_svi"  in data: params["weight_svi"]   = float(data["weight_svi"])
+            if "num_sites"   in data: params["num_sites"]    = int(data["num_sites"])
+            if "percentile"  in data: params["percentile"]   = int(data["percentile"])
+        except (ValueError, TypeError) as e:
+            return jsonify({"status": "error", "message": str(e)}), 400
 
+    t = threading.Thread(target=run_pipeline_background,
+                        kwargs={"params": params, "force": True}, daemon=True)
+    t.start()
     return jsonify({"status": "started", "message": "Pipeline started in background."})
 
-
-
 # Helper Function
-
 def load_sites():
     """
     Load scored candidate sites from the GeoJSON output file.
@@ -254,6 +288,18 @@ def load_sites():
 
     return sorted(sites, key=lambda x: x['gps'], reverse=True)
 
+def load_last_params():
+    path = os.path.join(OUTPUT_DIR, 'last_run_params.json')
+    if os.path.exists(path):
+        with open(path) as f:
+            return json.load(f)
+    return DEFAULT_PARAMS.copy()
+
+
+def check_svi_available():
+    svi_path = os.path.join(BASE_DIR, 'data', 'svi_utah')
+    return os.path.exists(svi_path) and bool(os.listdir(svi_path))
+
 # Run
 if __name__ == '__main__':
     print("  GeoPulse - Geothermal Sweet Spot Identifier")
@@ -271,4 +317,4 @@ if __name__ == '__main__':
     print("=" * 50)
 
     # Start Flask
-    app.run(host='0.0.0.0', port=5000, debug=False)
+    app.run(host='0.0.0.0', port=5001, debug=False)

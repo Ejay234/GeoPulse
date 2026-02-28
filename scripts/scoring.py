@@ -10,16 +10,26 @@ GeoPulse - Geothermal Potential Scoring
 import ee
 import json
 import os
-from google_crc32c import value
+import fiona
 import numpy as np
 import pandas as pd
+import geopandas as gpd
+
 
 ee.Initialize(project="gen-lang-client-0356293060")
 
 STUDY_REGION = ee.Geometry.Rectangle([-113.5, 37.0, -111.5, 39.0])
 SCALE = 1000
+START_DATE   = os.environ.get("GEOPULSE_START_DATE",  "2023-05-01")
+END_DATE     = os.environ.get("GEOPULSE_END_DATE",    "2024-09-30")
 OUTPUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'outputs')
 DATA_DIR   = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data')
+CLOUD_COVER  = int(os.environ.get("GEOPULSE_CLOUD_COVER", "20"))
+WEIGHT_LST   = float(os.environ.get("GEOPULSE_WEIGHT_LST",  "0.5"))
+WEIGHT_GRID  = float(os.environ.get("GEOPULSE_WEIGHT_GRID", "0.3"))
+WEIGHT_SVI   = float(os.environ.get("GEOPULSE_WEIGHT_SVI",  "0.2"))
+NUM_SITES    = int(os.environ.get("GEOPULSE_NUM_SITES",   "10"))
+PERCENTILE   = int(os.environ.get("GEOPULSE_PERCENTILE",  "70"))
 
 
 # LST Score
@@ -28,19 +38,32 @@ def get_lst_score():
     Pull LST from GEE and normalize 0 to 100
     Higher LST anomaly = higher score
     """
+    # Import the proper LST functions from lst_analysis.py
+    import sys
+    sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+    from lst_analysis import apply_scale_factors, compute_ndvi, compute_emissivity, compute_lst
 
     print("Calculating LST Score...")
 
     landsat = (
-        ee.ImageCollection("LANDSAT/LC08/C02/T1_L2")
-        .filterBounds(STUDY_REGION)
-        .filterDate('2023-05-01', '2024-09-30')
-        .filter(ee.Filter.lt('CLOUD_COVER', 20))
-        .map(lambda img: img.select("ST_B10").multiply(0.00341803).add(149.0).subtract(273.15))
-    )
-    lst = landsat.median().rename("LST").clip(STUDY_REGION)
+            ee.ImageCollection("LANDSAT/LC09/C02/T1_L2")
+            .filterBounds(STUDY_REGION)
+            .filterDate(START_DATE, END_DATE)
+            .filter(ee.Filter.lt('CLOUD_COVER', CLOUD_COVER))
+            .map(apply_scale_factors)
+            .map(compute_ndvi)
+            .map(compute_emissivity)
+            .map(compute_lst)
+        )
 
-    # Normalize: (value - min) / (max - min) * 100
+    count = landsat.size().getInfo()
+    print(f"  Images found: {count}")
+
+    if count == 0:
+        raise ValueError(f"No images found. Try widening date range or cloud cover.")
+
+    lst = landsat.select("LST_Celsius").median().clip(STUDY_REGION)
+
     stats = lst.reduceRegion(
         reducer=ee.Reducer.minMax(),
         geometry=STUDY_REGION,
@@ -48,11 +71,10 @@ def get_lst_score():
         maxPixels=1e9
     ).getInfo()
 
-    print(f"  LST raw stats: {stats}")
     vals = sorted(stats.values())
     lst_min, lst_max = vals[0], vals[-1]
     lst_score = lst.subtract(lst_min).divide(lst_max - lst_min).multiply(100).rename('lst_score')
-    print(f"  LST score computed. Range: {lst_min:.1f} -> {lst_max:.1f}")
+    print(f"  LST range: {lst_min:.1f}C -> {lst_max:.1f}C")
     return lst_score
 
 
@@ -93,33 +115,40 @@ def get_svi_score():
     Higher SVI (more vulnerable) = higher priority score
 
     Download SVI data from
-    https://www.atsdr.cdc.gov/placeandhealth/svi/data_documentation_download.html
+    https://www.atsdr.cdc.gov/place-health/php/svi/svi-data-documentation-download.html?CDC_AAref_Val=https://www.atsdr.cdc.gov/placeandhealth/svi/data_documentation_download.html
     Select: 2022, Utah, Census Tract, CSV + Shapefile
     Save to: data/svi_utah/ 
     """
 
     svi_path = os.path.join(DATA_DIR, 'svi_utah')
-    shp_files = [f for f in os.listdir(svi_path) if f.endswith('.shp')] if os.path.exists(svi_path) else []
 
-    if not shp_files:
-        print("SVI shapefile not found, using uniform placeholder (50).")
-        print(f"Download from CDC and place in: {svi_path}")
+    if not os.path.exists(svi_path):
+        print("  SVI data not found - using neutral placeholder (50).")
         return ee.Image(50).rename('svi_score').clip(STUDY_REGION), None
 
-    import geopandas as gpd
-    shp_path = os.path.join(svi_path, shp_files[0])
-    print(f"  Loading SVI: {shp_files[0]}")
-    gdf = gpd.read_file(shp_path)
+    try:
+        # The svi_utah folder itself is the .gdb
+        layers = fiona.listlayers(svi_path)
+        print(f"  GDB layers found: {layers}")
 
-    # RPL_THEMES = overall SVI percentile ranking (0–1, higher = more vulnerable)
-    if "RPL_THEMES" in gdf.columns:
-        gdf = gdf[gdf["RPL_THEMES"] >= 0]
-        gdf['svi_score'] = gdf['RPL_THEMES'] * 100
-    else:
-        gdf['svi_score'] = 50
+        # Pick the tract-level SVI layer
+        layer = next((l for l in layers if 'SVI' in l.upper() or 'TRACT' in l.upper()), layers[0])
+        print(f"  Using layer: {layer}")
 
-    print(f"  SVI loaded: {len(gdf)} census tracts.")
-    return ee.Image(50).rename('svi_score').clip(STUDY_REGION), gdf
+        gdf = gpd.read_file(svi_path, layer=layer)
+
+        if "RPL_THEMES" in gdf.columns:
+            gdf = gdf[gdf["RPL_THEMES"] >= 0]
+            gdf['svi_score'] = gdf['RPL_THEMES'] * 100
+        else:
+            gdf['svi_score'] = 50
+
+        print(f"  SVI loaded: {len(gdf)} census tracts.")
+        return ee.Image(50).rename('svi_score').clip(STUDY_REGION), gdf
+
+    except Exception as e:
+        print(f"  SVI load failed: {e} - using neutral placeholder.")
+        return ee.Image(50).rename('svi_score').clip(STUDY_REGION), None
 
 
 # Combine Scores
@@ -131,10 +160,10 @@ def compute_final_score(lst_score, grid_score, svi_score):
 
     print("Computing final Geothermal Potential Score (GPS)...")
     gps = (
-        lst_score.multiply(0.5)
-        .add(grid_score.multiply(0.3))
-        .add(svi_score.multiply(0.2))
-        .rename('GPS')
+    lst_score.multiply(WEIGHT_LST)
+    .add(grid_score.multiply(WEIGHT_GRID))
+    .add(svi_score.multiply(WEIGHT_SVI))
+    .rename('GPS')
     )
     return gps
 
@@ -148,7 +177,7 @@ def extract_top_sites(gps_image, n=10):
     print(f"Extracting top {n} candidate sites...")
 
     threshold_result = gps_image.reduceRegion(
-        reducer=ee.Reducer.percentile([90]),
+        reducer=ee.Reducer.percentile([PERCENTILE]),
         geometry=STUDY_REGION,
         scale=SCALE,
         maxPixels=1e9
@@ -201,7 +230,7 @@ if __name__ == "__main__":
     task.start()
     print("GPS score export started -> Google Drive/GeoPulse/")
 
-    top_sites = extract_top_sites(gps, n=10)
+    top_sites = extract_top_sites(gps, n=NUM_SITES)
     out_path = os.path.join(OUTPUT_DIR, 'scored_sites.geojson')
     with open(out_path, 'w') as f:
         json.dump(top_sites, f, indent=2)

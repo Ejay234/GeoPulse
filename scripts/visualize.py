@@ -228,7 +228,7 @@ def build_map():
                 <tr><td>LST</td><td>{site['lst_c']}°C</td></tr>
                 <tr><td>Coords</td><td>{site['lat']:.3f}, {site['lon']:.3f}</td></tr>
             </table>
-            <p style="font-size:11px; color:#666; margin:6px 0 0 0;">💡 {site['note']}</p>
+            <p style="font-size:11px; color:#666; margin:6px 0 0 0;">{site['note']}</p>
         </div>
         """
         folium.CircleMarker(
