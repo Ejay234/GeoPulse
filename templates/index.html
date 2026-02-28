@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoPulse — Geothermal Sweet Spot Identifier</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #0f1117;
+            color: #e0e0e0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── Header ── */
+        header {
+            background: #1a1d27;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid #d73027;
+            flex-shrink: 0;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo h1 {
+            font-size: 22px;
+            color: #d73027;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        .logo span {
+            font-size: 12px;
+            color: #888;
+        }
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 12px;
+            color: #888;
+        }
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        .status-idle    { background: #2a2d3a; color: #888; }
+        .status-running { background: #2a3a1a; color: #8bc34a; }
+        .status-done    { background: #1a2a3a; color: #4fc3f7; }
+        .status-error   { background: #3a1a1a; color: #ef5350; }
+
+        /* ── Main Layout ── */
+        .main {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            width: 300px;
+            background: #1a1d27;
+            border-right: 1px solid #2a2d3a;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        .sidebar-section {
+            padding: 16px;
+            border-bottom: 1px solid #2a2d3a;
+        }
+        .sidebar-section h3 {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #888;
+            margin-bottom: 12px;
+        }
+
+        /* Top site highlight */
+        .top-site-card {
+            background: linear-gradient(135deg, #1a0a0a, #2a1010);
+            border: 1px solid #d73027;
+            border-radius: 8px;
+            padding: 12px;
+        }
+        .top-site-card .score {
+            font-size: 32px;
+            font-weight: 700;
+            color: #d73027;
+            line-height: 1;
+        }
+        .top-site-card .score-label {
+            font-size: 10px;
+            color: #888;
+            margin-bottom: 8px;
+        }
+        .top-site-card .name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+        }
+        .top-site-card .coords {
+            font-size: 11px;
+            color: #888;
+            margin-top: 4px;
+        }
+
+        /* Site list */
+        .site-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #2a2d3a;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .site-item:hover { background: #22253a; margin: 0 -16px; padding: 8px 16px; }
+        .site-item:last-child { border-bottom: none; }
+        .rank-badge {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        .site-info { flex: 1; }
+        .site-name { font-size: 12px; font-weight: 600; color: #e0e0e0; }
+        .site-coords { font-size: 10px; color: #666; }
+        .site-gps {
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        /* Formula box */
+        .formula-box {
+            background: #0f1117;
+            border: 1px solid #2a2d3a;
+            border-radius: 6px;
+            padding: 10px 12px;
+            font-size: 12px;
+            line-height: 1.8;
+        }
+        .formula-box .formula {
+            color: #4fc3f7;
+            font-family: monospace;
+            font-size: 11px;
+        }
+        .weight-bar {
+            display: flex;
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+        .w-lst  { background: #d73027; flex: 5; }
+        .w-grid { background: #fc8d59; flex: 3; }
+        .w-svi  { background: #fee08b; flex: 2; }
+
+        /* Run button */
+        .run-btn {
+            width: 100%;
+            padding: 10px;
+            background: #d73027;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .run-btn:hover { background: #b71c1c; }
+        .run-btn:disabled { background: #444; cursor: not-allowed; }
+
+        /* ── Map Area ── */
+        .map-container {
+            flex: 1;
+            position: relative;
+        }
+        .map-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Color helpers */
+        .c-red    { color: #d73027; }
+        .c-orange { color: #fc8d59; }
+        .c-yellow { color: #fee08b; }
+        .c-green  { color: #91cf60; }
+        .bg-red    { background: #d73027; }
+        .bg-orange { background: #fc8d59; }
+        .bg-yellow { background: #fee08b; }
+        .bg-green  { background: #91cf60; }
+    </style>
+</head>
+<body>
+
+<!-- ── Header ── -->
+<header>
+    <div class="logo">
+        <h1>🌋 GeoPulse</h1>
+        <span>Geothermal Sweet Spot Identifier · Wilkes Center Hackathon 2025</span>
+    </div>
+    <div class="header-right">
+        {% if last_run %}
+            <span>Last run: {{ last_run }}</span>
+        {% else %}
+            <span>No pipeline run yet</span>
+        {% endif %}
+        <span class="status-badge status-{{ status }}">{{ status.upper() }}</span>
+    </div>
+</header>
+
+<!-- ── Main ── -->
+<div class="main">
+
+    <!-- ── Sidebar ── -->
+    <div class="sidebar">
+
+        <!-- Top Site -->
+        {% if top_site %}
+        <div class="sidebar-section">
+            <h3>🎯 Top Candidate Site</h3>
+            <div class="top-site-card">
+                <div class="score">{{ top_site.gps }}</div>
+                <div class="score-label">GPS SCORE / 100</div>
+                <div class="name">{{ top_site.name }}</div>
+                <div class="coords">{{ top_site.lat }}, {{ top_site.lon }}</div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- All Sites -->
+        <div class="sidebar-section">
+            <h3>📍 Candidate Sites ({{ sites|length }})</h3>
+            {% for site in sites %}
+            {% set gps = site.gps %}
+            {% if gps >= 85 %}
+                {% set color_class = 'c-red' %}{% set bg_class = 'bg-red' %}
+            {% elif gps >= 70 %}
+                {% set color_class = 'c-orange' %}{% set bg_class = 'bg-orange' %}
+            {% elif gps >= 60 %}
+                {% set color_class = 'c-yellow' %}{% set bg_class = 'bg-yellow' %}
+            {% else %}
+                {% set color_class = 'c-green' %}{% set bg_class = 'bg-green' %}
+            {% endif %}
+            <div class="site-item">
+                <div class="rank-badge {{ bg_class }}" style="color:#111;">{{ site.rank }}</div>
+                <div class="site-info">
+                    <div class="site-name">{{ site.name }}</div>
+                    <div class="site-coords">{{ site.lat }}, {{ site.lon }}</div>
+                </div>
+                <div class="site-gps {{ color_class }}">{{ site.gps }}</div>
+            </div>
+            {% else %}
+            <p style="font-size:12px; color:#666;">
+                No sites scored yet. Run the pipeline to generate results.
+            </p>
+            {% endfor %}
+        </div>
+
+        <!-- Scoring Formula -->
+        <div class="sidebar-section">
+            <h3>⚙️ Scoring Formula</h3>
+            <div class="formula-box">
+                <div class="formula">GPS = 0.5×LST + 0.3×Grid + 0.2×SVI</div>
+                <div class="weight-bar" style="margin-top:8px;">
+                    <div class="w-lst"  title="LST 50%"></div>
+                    <div class="w-grid" title="Grid 30%"></div>
+                    <div class="w-svi"  title="SVI 20%"></div>
+                </div>
+                <div style="display:flex; gap:8px; margin-top:6px; font-size:10px;">
+                    <span class="c-red">■ LST 50%</span>
+                    <span class="c-orange">■ Grid 30%</span>
+                    <span class="c-yellow">■ SVI 20%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Run Pipeline -->
+        <div class="sidebar-section">
+            <h3>🔄 Pipeline Control</h3>
+            <button class="run-btn" onclick="runPipeline()" id="runBtn">
+                Run Fresh Analysis
+            </button>
+            <p style="font-size:10px; color:#666; margin-top:8px;">
+                Fetches latest Landsat data from GEE, rescores all sites,
+                and regenerates the map. Takes ~3–5 minutes.
+            </p>
+        </div>
+
+    </div><!-- /sidebar -->
+
+    <!-- ── Map ── -->
+    <div class="map-container">
+        <iframe src="/map" id="mapFrame"></iframe>
+    </div>
+
+</div><!-- /main -->
+
+<script>
+    // Poll pipeline status and refresh map when done
+    function runPipeline() {
+        const btn = document.getElementById('runBtn');
+        btn.disabled = true;
+        btn.textContent = 'Running...';
+
+        fetch('/run')
+            .then(r => r.json())
+            .then(data => {
+                if (data.status === 'ok') {
+                    btn.textContent = 'Done! Refreshing map...';
+                    // Reload the map iframe
+                    setTimeout(() => {
+                        document.getElementById('mapFrame').src = '/map?' + Date.now();
+                        btn.textContent = 'Run Fresh Analysis';
+                        btn.disabled = false;
+                        location.reload();
+                    }, 2000);
+                } else {
+                    btn.textContent = 'Error — check terminal';
+                    btn.disabled = false;
+                }
+            })
+            .catch(() => {
+                btn.textContent = 'Error — check terminal';
+                btn.disabled = false;
+            });
+    }
+</script>
+
+</body>
+</html>

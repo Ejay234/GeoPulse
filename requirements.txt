@@ -1,8 +1,15 @@
+# Core GEE & GeoSpatial
 earthengine-api>=0.1.370
-folium>=0.15.0
 geopandas>=0.14.0
+shapely>=2.0.0
+
+# Processing
 pandas>=2.0.0
 numpy>=1.24.0
-shapely>=2.0.0
+
+# Visual
+folium>=0.15.0
+
+# Web Server and Networking 
 flask>=3.0.0
 requests>=2.31.0

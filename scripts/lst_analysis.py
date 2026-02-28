@@ -32,7 +32,18 @@ COUNTIES = {
 }
 
 def compute_ndvi(image):
-    """Compute NDVI for a given Landsat image."""
+    """
+    Compute NDVI for a given Landsat image.
+
+    Formula: NDVI = (NIR - Red) / (NIR + Red)
+    - NIR: Band 5 (SR_B5)
+    - Red: Band 4 (SR_B4)
+
+    Values:
+    < 0.2 = Bare Soil / Rock
+    0.2-0.5 = Mixed Vegetation
+    > 0.5 = Dense Vegetation
+    """
     nir = image.select('SR_B5')
     red = image.select('SR_B4')
     ndvi = nir.subtract(red).divide(nir.add(red)).rename('NDVI')
@@ -65,6 +76,16 @@ def compute_emissivity(image):
 
 def compute_lst(image):
     """
+    Derive Land Surface Temperature (LST) in Celsius from Landsat Band 10.
+
+    Single-channel method using the formula:
+    LST = TB / (1 + (lambda * TB / rho) * ln(epsilon)) - 273.15
+
+    Where:
+    - TB: Brightness Temperature (Kelvin) from Band 10
+    - lambda: 10.895 um (Landsat 9 Band 10 central wavelength)
+    - rho: 14388 um*K (Planck radiation constant)
+    - epsilon: Surface emissivity (from compute_emissivity)
     """
 
     LAMBDA = 10.895 # micrometers
@@ -85,6 +106,11 @@ def compute_lst(image):
 
 def apply_scale_factors(image):
     """
+    Apply offical USGS Landsat Collection 2 surface reflectance scale factors
+    
+    Raw Landsat digital numbers must be scaled before analysis:
+    - Optical bands = value * 0.0000275 + (-0.2)
+    - Thermal band = kept raw
     """
 
     optical = image.select("SR_B.").multiply(0.0000275).add(-0.2)
@@ -94,6 +120,9 @@ def apply_scale_factors(image):
 # Main Analysis Function
 def run_lst_analysis(start_date = '2023-05-1', end_date = '2024-09-30'):
     """
+    Runs the full LST analysis popeline over the study region.
+
+    Uses summer motnsh to maximize thermal constrast between geothermally active and inactive areas
     """
     print(f"Running LST analysis for {start_date} to {end_date}...")
 
@@ -127,7 +156,9 @@ def run_lst_analysis(start_date = '2023-05-1', end_date = '2024-09-30'):
     return lst_composite
 
 def export_to_drive(image, filename='GeoPulse_LST_Utah'):
-    """Export LST image to Google Drive as GeoTIFF for use in scoring.py"""
+    """
+    Export LST image to Google Drive as GeoTIFF for use in scoring.py
+    """
     task = ee.batch.Export.image.toDrive(
         image=image,
         description=filename,
