@@ -23,8 +23,8 @@ import geopandas as gpd
 import pandas as pd
 import numpy as np
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__), '..')
-OUTPUT_DIR = os.path.join(BASE_DIR, 'output')
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+OUTPUT_DIR = os.path.join(BASE_DIR, 'outputs')
 DATA_DIR = os.path.join(BASE_DIR, 'data')
 
 COUNTIES = [
@@ -129,7 +129,7 @@ def build_map():
     <div style="position: fixed; top: 10px; left: 55px; z-index:1000; background:white;
                 padding: 12px 16px; border-radius: 8px; box-shadow: 2px 2px 8px rgba(0,0,0,0.3);
                 font-family: Arial, sans-serif; max-width: 280px;">
-        <h3 style="margin:0 0 6px 0; color:#d73027;">🌋 GeoPulse</h3>
+        <h3 style="margin:0 0 6px 0; color:#d73027;">GeoPulse</h3>
         <p style="margin:0 0 8px 0; font-size:12px; color:#555;">
             Geothermal Sweet Spot Identifier<br>
             <em>Wilkes Center Climate Hackathon 2025</em>
@@ -161,7 +161,7 @@ def build_map():
     ).add_to(m)
 
     # Layer 3: County Labels
-    county_layer = folium.FeatureGroup(name='📍 Study Counties')
+    county_layer = folium.FeatureGroup(name='Study Counties')
     for county in COUNTIES:
         folium.Marker(
             location=[county['lat'], county['lon']],
@@ -193,7 +193,7 @@ def build_map():
         # Parse real features if format matches
         # (extend this block once GEE export is confirmed)
 
-    sites_layer = folium.FeatureGroup(name='🎯 Geothermal Sweet Spots (Top 10)')
+    sites_layer = folium.FeatureGroup(name='Geothermal Sweet Spots (Top 10)')
     for i, site in enumerate(sites, 1):
         color = score_to_color(site['gps'])
         popup_html = f"""
@@ -236,7 +236,7 @@ def build_map():
     sites_layer.add_to(m)
 
     # Layer 5: Utah FORGE Reference Marker
-    forge_layer = folium.FeatureGroup(name='⚡ Utah FORGE Reference Site')
+    forge_layer = folium.FeatureGroup(name='Utah FORGE Reference Site')
     folium.Marker(
         location=[38.507, -112.893],
         popup=folium.Popup(
@@ -258,7 +258,7 @@ def build_map():
 # Run
 if __name__ == "__main__":
 
-    os.markdirs(OUTPUT_DIR, exist_ok=True)
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
 
     m = build_map()
     out_path = os.path.join(OUTPUT_DIR, 'sweet_spot_map.html')
