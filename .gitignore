@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.env
+venv/
+.venv/
+
+# GEE credentials
+.config/earthengine/
+
+# Data files (large, download separately)
+data/svi_utah/*.shp
+data/svi_utah/*.dbf
+data/svi_utah/*.prj
+data/svi_utah/*.shx
+data/svi_utah/*.cpg
+*.tif
+*.tiff
+
+# Outputs (generated, not committed)
+outputs/*.html
+outputs/*.geojson
+outputs/*.tif
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
