@@ -378,11 +378,8 @@ if __name__ == '__main__':
     print("  GeoPulse - Geothermal Sweet Spot Identifier")
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-    # Auto-run pipeline on startup in background thread
-    # If outputs already exist, this returns immediately without re-running
-    print("[GeoPulse] Checking for existing outputs...")
-    t = threading.Thread(target=run_pipeline_background, daemon=True)
-    t.start()
+    pipeline["status"] = "idle"
+    pipeline["step"]   = "Ready — click Run to start analysis"
 
     print("[GeoPulse] Server starting at http://0.0.0.0:5001")
     print("[GeoPulse] Open http://localhost:5001 in your browser")
